@@ -1,0 +1,47 @@
+.htaccess
+xmlrpc.php
+blogs.dir/
+upgrade/
+sitemap.xml
+sitemap.xml.gz
+uploads/
+wpremote
+*-backups
+/node_modules/
+
+### WordPress local dev ###
+wp-config-local.php
+*.log
+hm-dev/
+ignore/
+content/db.php
+test-uploads/
+/chassis-p4
+
+### OS and Software generated files ###
+.DS_Store
+ehthumbs.db
+Thumbs.db
+._*
+.idea/
+.vscode/
+
+# Composer
+/vendor
+/content/hm-platform
+/content/plugins-mu/cmb2
+#/content/plugins-mu/extended-cpts
+#/content/plugins-mu/elasticpress
+#/content/plugins-mu/posts-to-posts
+#/content/plugins-mu/network-media-library
+#/content/plugins-mu/publishing-checklist
+#/content/plugins-mu/two-factor
+#/content/plugins/query-monitor
+#/content/plugins-mu/stream
+#/content/plugins/edit-flow
+#/content/plugins/debug-bar-elasticpress
+#/content/plugins/wp-multibyte-patch
+/wordpress
+
+# https://github.com/webpack-contrib/mini-css-extract-plugin/issues/151
+#/content/plugins-mu/dflds-cmb2/assets/css/dflds-cmb2

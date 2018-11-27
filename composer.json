@@ -1,0 +1,80 @@
+{
+	"name": "humanmade/planet4-dev",
+	"description": "",
+	"license": "GPL-2.0+",
+	"minimum-stability": "stable",
+	"config": {
+		"autoloader-suffix": "DontChange",
+		"platform": {
+			"php": "7.2"
+		}
+	},
+	"repositories": [
+		{
+			"type": "composer",
+			"url": "https://wpackagist.org"
+		},
+		{
+			"type": "git",
+			"url": "https://github.com/humanmade/hm-platform.git"
+		}
+	],
+	"require-dev": {
+		"phpunit/phpunit": "~6.5",
+		"humanmade/coding-standards": "dev-master",
+		"wimg/php-compatibility": "*",
+		"jakub-onderka/php-parallel-lint": "~1.0",
+		"brainmaestro/composer-git-hooks": "~2.4"
+	},
+	"require": {
+		"php": "~7.2",
+		"oomphinc/composer-installers-extender": "~1.1",
+		"cmb2/cmb2": "~2.4",
+		"humanmade/hm-platform": "1.2.15",
+		"johnbillion/query-monitor": "~3.0",
+		"johnpbloch/wordpress": "~4.9"
+	},
+	"extra": {
+		"installer-types" : [ "library" ],
+		"installer-paths": {
+			"content/plugins-mu/{$name}/": [
+				"type:wordpress-muplugin",
+				"cmb2/cmb2"
+			],
+			"content/plugins/{$name}/": [ "type:wordpress-plugin" ],
+			"content/{$name}/": [ "type:wordpress-dropin" ],
+			"wordpress": [ "type:wordpress-core" ]
+		},
+		"hooks": {
+			"pre-commit": "composer precommit"
+		}
+	},
+	"scripts": {
+		"post-install-cmd": [
+			"cd content/hm-platform && git submodule update --init --recursive",
+			"ps -ocommand= -p $PPID | grep no-dev > /dev/null && echo dev || vendor/bin/cghooks update"
+		],
+		"post-update-cmd": [
+			"cd content/hm-platform && git submodule update --init --recursive",
+			"vendor/bin/cghooks update"
+		],
+
+		"phpcs": "phpcs --standard=phpcs.xml.dist",
+		"lint:php": "parallel-lint --no-colors content/plugins content/plugins-mu content/themes .circleci .config .tests",
+		"test:php": "VAGRANT_CWD=chassis vagrant ssh -c 'cd /chassis && phpunit'",
+
+		"update-scripts": "bash .config/update.sh",
+
+		"precommit": [
+			"@lint:php",
+			"@phpcs"
+		],
+		"run-tests": [
+			"@test:php"
+		],
+
+		"ci:run-tests": [
+			"vendor/bin/phpunit"
+		]
+	}
+}
