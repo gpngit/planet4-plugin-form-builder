@@ -36,7 +36,7 @@ Thumbs.db
 #/content/plugins-mu/network-media-library
 #/content/plugins-mu/publishing-checklist
 #/content/plugins-mu/two-factor
-#/content/plugins/query-monitor
+/content/plugins/query-monitor
 #/content/plugins-mu/stream
 #/content/plugins/edit-flow
 #/content/plugins/debug-bar-elasticpress

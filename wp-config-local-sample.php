@@ -1,7 +1,7 @@
 <?php
 // DB.
-if ( file_exists( __DIR__ . '/chassis/local-config-db.php' ) ) {
-	include __DIR__ . '/chassis/local-config-db.php';
+if ( file_exists( __DIR__ . '/chassis-p4/local-config-db.php' ) ) {
+	include __DIR__ . '/chassis-p4/local-config-db.php';
 } else {
 	define( 'DB_NAME', 'wordpress' );
 	define( 'DB_USER', 'wordpress' );
@@ -39,8 +39,8 @@ if ( ! defined( 'EP_HOST' ) ) {
 }
 
 // Load Chassis extensions.
-if ( file_exists( __DIR__ . '/chassis/local-config-extensions.php' ) ) {
-	include __DIR__ . '/chassis/local-config-extensions.php';
+if ( file_exists( __DIR__ . '/chassis-p4/local-config-extensions.php' ) ) {
+	include __DIR__ . '/chassis-p4/local-config-extensions.php';
 }
 
 global $hm_platform;

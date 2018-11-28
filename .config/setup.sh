@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-export VAGRANT_CWD=chassis
+export VAGRANT_CWD=chassis-p4
 
 # Double-ensure that all submodules are checked out
 printf "\n-----------------------------------\n"
@@ -11,9 +11,9 @@ git submodule update --init --recursive
 printf "\n----------------------------------------\n"
 printf "Setting up Chassis config and installing"
 printf "\n----------------------------------------\n"
-git clone --progress --recursive git@github.com:Chassis/Chassis.git chassis
-cp .config/config.local.yaml chassis/
-cp .config/local-config.php chassis/
+git clone --progress --recursive git@github.com:Chassis/Chassis.git chassis-p4
+cp .config/config.local.yaml chassis-p4/
+cp .config/local-config.php chassis-p4/
 cp wp-config-local-sample.php wp-config-local.php
 vagrant up
 

@@ -61,7 +61,7 @@
 
 		"phpcs": "phpcs --standard=phpcs.xml.dist",
 		"lint:php": "parallel-lint --no-colors content/plugins content/plugins-mu content/themes .circleci .config .tests",
-		"test:php": "VAGRANT_CWD=chassis vagrant ssh -c 'cd /chassis && phpunit'",
+		"test:php": "VAGRANT_CWD=chassis-p4 vagrant ssh -c 'cd /chassis && phpunit'",
 
 		"update-scripts": "bash .config/update.sh",
 
