@@ -30,6 +30,7 @@
 		"php": "~7.2",
 		"oomphinc/composer-installers-extender": "~1.1",
 		"cmb2/cmb2": "~2.4",
+		"timber/timber": "1.*",
 		"humanmade/hm-platform": "1.2.15",
 		"johnbillion/query-monitor": "~3.0",
 		"johnpbloch/wordpress": "~4.9",
@@ -62,7 +63,7 @@
 		],
 
 		"phpcs": "phpcs --standard=phpcs.xml.dist",
-		"lint:php": "parallel-lint --no-colors content/plugins content/plugins-mu content/themes .circleci .config .tests",
+		"lint:php": "parallel-lint --no-colors content/plugins content/plugins-mu content/themes .config .tests",
 		"test:php": "VAGRANT_CWD=chassis-p4 vagrant ssh -c 'cd /chassis && phpunit'",
 
 		"update-scripts": "bash .config/update.sh",
