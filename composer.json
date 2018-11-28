@@ -32,7 +32,8 @@
 		"cmb2/cmb2": "~2.4",
 		"humanmade/hm-platform": "1.2.15",
 		"johnbillion/query-monitor": "~3.0",
-		"johnpbloch/wordpress": "~4.9"
+		"johnpbloch/wordpress": "~4.9",
+		"wpackagist-theme/twentyseventeen": "^1"
 	},
 	"extra": {
 		"installer-types" : [ "library" ],
@@ -42,6 +43,7 @@
 				"cmb2/cmb2"
 			],
 			"content/plugins/{$name}/": [ "type:wordpress-plugin" ],
+			"content/themes/{$name}/": [ "type:wordpress-theme" ],
 			"content/{$name}/": [ "type:wordpress-dropin" ],
 			"wordpress": [ "type:wordpress-core" ]
 		},

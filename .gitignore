@@ -30,17 +30,8 @@ Thumbs.db
 /vendor
 /content/hm-platform
 /content/plugins-mu/cmb2
-#/content/plugins-mu/extended-cpts
-#/content/plugins-mu/elasticpress
-#/content/plugins-mu/posts-to-posts
-#/content/plugins-mu/network-media-library
-#/content/plugins-mu/publishing-checklist
-#/content/plugins-mu/two-factor
 /content/plugins/query-monitor
-#/content/plugins-mu/stream
-#/content/plugins/edit-flow
-#/content/plugins/debug-bar-elasticpress
-#/content/plugins/wp-multibyte-patch
+/content/themes/twentyseventeen
 /wordpress
 
 # https://github.com/webpack-contrib/mini-css-extract-plugin/issues/151
