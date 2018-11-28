@@ -14,6 +14,7 @@
 	<exclude-pattern>content/plugins-mu/autoloader.php</exclude-pattern>
 	<exclude-pattern>content/plugins-mu/cmb2/*</exclude-pattern>
 	<exclude-pattern>content/plugins/query-monitor/*</exclude-pattern>
+	<exclude-pattern>content/themes/twentyseventeen/*</exclude-pattern>
 	<exclude-pattern>node_modules/*</exclude-pattern>
 	<exclude-pattern>vendor/*</exclude-pattern>
 	<exclude-pattern>.tests/phpunit/bootstrap.php</exclude-pattern>
