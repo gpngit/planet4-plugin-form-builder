@@ -21,8 +21,13 @@
  */
 
 // Exit if accessed directly. defined( 'ABSPATH' ) or die( 'Direct access is forbidden !' );
+define( 'P4FB_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 
 require_once __DIR__ . '/classes/class-form-builder.php';
+if ( ! class_exists( 'Gamajo_Template_Loader' ) ) {
+	require plugin_dir_path( __FILE__ ) . 'class-gamajo-template-loader.php';
+}
+require_once __DIR__ . '/classes/class-form-template-loader.php';
 add_action( 'plugins_loaded', function () {
 	P4FB\Form_Builder\Form_Builder::get_instance()->load();
 } );
