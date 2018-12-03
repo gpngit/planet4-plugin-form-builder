@@ -1,0 +1,8 @@
+<label class="p4fb-field p4fb-field-{{ field.type | e('html_attr') }} {{ field.name | e('html_attr') }}">
+	{{ field.label | e('esc_html') }}
+	<select name="{{ field.name }}">
+		{% for val, option in field.options %}
+			<option value="{{ val | e('html_attr') }}">{{ option | e('esc_html') }}</option>
+		{% endfor %}
+	</select>
+</label>

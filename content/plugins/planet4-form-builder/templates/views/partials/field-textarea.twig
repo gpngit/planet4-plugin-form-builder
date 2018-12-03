@@ -1,0 +1,4 @@
+<label class="p4fb-field p4fb-field-{{ field.type | e('html_attr') }} {{ field.name | e('html_attr') }}">
+	{{ field.label | e('esc_html') }}
+	<textarea name="{{ field.name }}" class="{{ field.class }}">{{ field.value | e('esc_html') }}</textarea>
+</label>

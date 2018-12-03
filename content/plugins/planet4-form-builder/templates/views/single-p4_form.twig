@@ -1,0 +1,16 @@
+<form action="{{ form_submit_url }}" method="post" class="p4fb_form">
+	<input type="hidden" name="action" value="{{ action }}">
+	<input type="hidden" name="p4_form_id" value="{{ post.ID }}">
+	<input type="hidden" name="p4_form_type" value="{{ post.p4_form_form_type }}">
+	<h2>{{ post.title }}</h2>
+	<ul class="form-fields">
+		{% for field in post.p4_form_fields %}
+			<li>
+				{% include [ 'partials/field-'~field.type~'.twig' ] %}
+			</li>
+		{% endfor %}
+		<li>
+			{% include [ 'partials/submit.twig' ] %}
+		</li>
+	</ul>
+</form>
