@@ -5,7 +5,7 @@
 
 namespace P4FB\Form_Builder;
 
-use Timber\Timber;
+//use CMB2_Field;
 
 class Form_Builder {
 	/**
@@ -13,17 +13,10 @@ class Form_Builder {
 	 *
 	 * @var  Form_Builder
 	 */
+
 	static $instance;
 
 	const P4FB_FORM_CPT = 'p4_form';
-
-	/**
-	 *  Store the Template Loader instance
-	 *
-	 * @var  Form_Template_Loader
-	 */
-	protected static $template_loader;
-
 
 	/**
 	 * Create singleton instance.
@@ -43,13 +36,8 @@ class Form_Builder {
 	 */
 	function load() {
 		add_action( 'init', [ $this, 'register_post_type' ] );
-		self::$template_loader = new Form_Template_Loader();
-		add_filter( 'template_include', [ $this, 'template_include' ] );
-
 		add_action( 'cmb2_init', [ $this, 'add_fields' ] );
 		add_filter( 'enter_title_here', [ $this, 'filter_enter_title_here' ], 10, 2 );
-
-		Timber::$locations = [ P4FB_PLUGIN_DIR . '/templates/views' ];
 	}
 
 	function filter_enter_title_here( $title, $post ) {
@@ -134,15 +122,8 @@ class Form_Builder {
 
 		$cmb_form_mb = new_cmb2_box( [
 			'id'           => $prefix . 'form_metabox',
-			'title'        => esc_html__( 'Form details', 'planet4-form-builder' ),
+			'title'        => esc_html__( 'Form Details', 'planet4-form-builder' ),
 			'object_types' => [ self::P4FB_FORM_CPT ],
-		] );
-
-		$cmb_form_mb->add_field( [
-			'id'          => $prefix . 'description',
-			'name'        => esc_html__( 'Description', 'planet4-form-builder' ),
-			'description' => esc_html__( 'Write a short description for this form', 'planet4-form-builder' ),
-			'type'        => 'textarea_small',
 		] );
 
 		$cmb_form_mb->add_field(
@@ -158,15 +139,6 @@ class Form_Builder {
 				],
 			]
 		);
-
-		$cmb_form_mb->add_field( [
-			'id'          => $prefix . 'submit_text',
-			'name'        => esc_html__( 'Submit button', 'planet4-form-builder' ),
-			'description' => esc_html__( 'What should the submit button say?', 'planet4-form-builder' ),
-			'type'        => 'text',
-			'default'     => esc_html__( 'Submit', 'planet4-form-builder' ),
-		] );
-
 
 		/**
 		 * Repeatable Field Groups
@@ -191,67 +163,65 @@ class Form_Builder {
 		] );
 
 		$cmb_fields_mb->add_group_field( $group_field_id, [
-			'id'              => 'name',
-			'name'            => esc_html__( 'Field name', 'planet4-form-builder' ),
-			'type'            => 'text',
-			'sanitization_cb' => [ $this, 'sanitize_name' ],
+			'name' => esc_html__( 'Field name', 'planet4-form-builder' ),
+			'id'   => 'name',
+			'type' => 'text',
 		] );
 
 		$cmb_fields_mb->add_group_field( $group_field_id, [
-			'id'          => 'description',
 			'name'        => esc_html__( 'Description', 'planet4-form-builder' ),
 			'description' => esc_html__( 'Write a short description for this entry', 'planet4-form-builder' ),
+			'id'          => 'description',
 			'type'        => 'textarea_small',
 		] );
 
 		$cmb_fields_mb->add_group_field( $group_field_id, [
-			'id'               => 'type',
 			'name'             => esc_html__( 'Field type', 'planet4-form-builder' ),
+			'id'               => 'type',
 			'type'             => 'select',
 			'show_option_none' => true,
 			'options'          => [
-				'text'           => __( 'Text field', 'planet4-form-builder' ),
-				'textarea'       => __( 'Text area', 'planet4-form-builder' ),
-				'select'         => __( 'Dropdown select', 'planet4-form-builder' ),
-				'checkbox'       => __( 'Checkbox', 'planet4-form-builder' ),
-				'checkbox-group' => __( 'Checkbox group', 'planet4-form-builder' ),
-				'radio-group'    => __( 'Radio button group', 'planet4-form-builder' ),
+				'text'     => __( 'Text field', 'planet4-form-builder' ),
+				'textarea' => __( 'Text area', 'planet4-form-builder' ),
+				'select'   => __( 'Dropdown select', 'planet4-form-builder' ),
+				'checkbox' => __( 'Checkbox', 'planet4-form-builder' ),
+				'radio'    => __( 'Radio button', 'planet4-form-builder' ),
 			],
 		] );
 
 		$cmb_fields_mb->add_group_field( $group_field_id, [
-			'id'   => 'label',
 			'name' => esc_html__( 'Field label', 'planet4-form-builder' ),
+			'id'   => 'label',
 			'type' => 'text',
 		] );
 
 		$cmb_fields_mb->add_group_field( $group_field_id, [
-			'id'   => 'default',
 			'name' => esc_html__( 'Field default value', 'planet4-form-builder' ),
+			'id'   => 'default',
 			'type' => 'text',
 		] );
 
 		$cmb_fields_mb->add_group_field( $group_field_id, [
-			'id'          => 'options',
 			'name'        => esc_html__( 'Field options', 'planet4-form-builder' ),
+			'id'          => 'options',
 			'description' => esc_html__(
-				'Used for drop down select, multiple checkboxes or radio buttons. Enter each choice on a new line. For more control, you may specify both a value and label like this: "red:Red"',
+				'Used for drop down select. Enter each choice on a new line. For more control, you may specify both a value and label like this: red : Red',
 				'planet4-form-builder'
 			),
 			'type'        => 'textarea',
 		] );
 
 		$cmb_fields_mb->add_group_field( $group_field_id, [
-			'id'          => 'value',
 			'name'        => esc_html__( 'Field value', 'planet4-form-builder' ),
+			'id'          => 'value',
 			'description' => esc_html__( 'used for checkbox, radio, and hidden fields.', 'planet4-form-builder' ),
 			'type'        => 'text',
 		] );
 
 		$cmb_fields_mb->add_group_field( $group_field_id, [
-			'id'          => 'class',
 			'name'        => esc_html__( 'Field class', 'planet4-form-builder' ),
-			'description' => esc_html__( 'add any arbitrary classes you need to affect the display.', 'planet4-form-builder' ),
+			'id'          => 'class',
+			'description' => esc_html__( 'add any abitrary classes you need to affect the display.', 'planet4-form-builder' ),
 			'type'        => 'text',
 		] );
 
@@ -260,32 +230,4 @@ class Form_Builder {
 		}
 
 	}
-
-	/**
-	 * Make sure the name will work as a form field name.
-	 *
-	 * @param $value The field name to be sanitized.
-	 *
-	 * @return string The sanitized field name.
-	 */
-	public function sanitize_name( $value ) {
-		return sanitize_title( $value );
-	}
-
-	/**
-	 * Optionally return our form template.
-	 *
-	 * @param string $original_template The current calculated template.
-	 *
-	 * @return string Our template or the original.
-	 */
-	public function template_include( string $original_template ) : string {
-		if ( self::P4FB_FORM_CPT === get_post_type() ) {
-			return self::$template_loader->get_template_part( 'single', self::P4FB_FORM_CPT, false );
-		}
-
-		return $original_template;
-	}
-
-
 }
