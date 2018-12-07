@@ -15,6 +15,9 @@ class Form_Builder {
 	 */
 	static $instance;
 
+	/**
+	 * The internal CPT name.
+	 */
 	const P4FB_FORM_CPT = 'p4_form';
 
 	/**
@@ -52,7 +55,15 @@ class Form_Builder {
 		Timber::$locations = [ P4FB_PLUGIN_DIR . '/templates/views' ];
 	}
 
-	function filter_enter_title_here( $title, $post ) {
+	/**
+	 * Set up a different prompt for the Title field.
+	 *
+	 * @param string   $title The current prompt.
+	 * @param \WP_Post $post  THe current post.
+	 *
+	 * @return string The updated string.
+	 */
+	function filter_enter_title_here( string $title, \WP_Post $post ) : string {
 		if ( self::P4FB_FORM_CPT === $post->post_type ) {
 			return __( 'Enter form name' );
 		}
@@ -128,6 +139,9 @@ class Form_Builder {
 		register_post_type( self::P4FB_FORM_CPT, $args );
 	}
 
+	/**
+	 * Add the required CMB2 meta boxes and fields.
+	 */
 	public function add_fields() {
 		// Fields meta box
 		$prefix = 'p4_form_';
@@ -147,10 +161,11 @@ class Form_Builder {
 
 		$cmb_form_mb->add_field(
 			[
-				'id'      => $prefix . 'form_type',
-				'name'    => esc_html__( 'CMS type', 'planet4-form-builder' ),
-				'type'    => 'select',
-				'options' => [
+				'id'          => $prefix . 'form_type',
+				'name'        => esc_html__( 'CMS type', 'planet4-form-builder' ),
+				'description' => esc_html__( 'Which CMS does this form map to?', 'planet4-form-builder' ),
+				'type'        => 'select',
+				'options'     => [
 					'en'  => esc_html__( 'Engaging Networks', 'planet4-form-builder' ),
 					'sf'  => esc_html__( 'Salesforce', 'planet4-form-builder' ),
 					'hs'  => esc_html__( 'Hubspot', 'planet4-form-builder' ),
@@ -179,10 +194,9 @@ class Form_Builder {
 
 		// $group_field_id is the field id string, so in this case: $prefix . 'fields'
 		$group_field_id = $cmb_fields_mb->add_field( [
-			'id'          => $prefix . 'fields',
-			'type'        => 'group',
-			'description' => esc_html__( 'Generates reusable form entries', 'planet4-form-builder' ),
-			'options'     => [
+			'id'      => $prefix . 'fields',
+			'type'    => 'group',
+			'options' => [
 				'group_title'   => esc_html__( 'Field {#}', 'planet4-form-builder' ), // The {#} gets replaced by row number.
 				'add_button'    => esc_html__( 'Add Another Field', 'planet4-form-builder' ),
 				'remove_button' => esc_html__( 'Remove Field', 'planet4-form-builder' ),
@@ -192,7 +206,7 @@ class Form_Builder {
 
 		$cmb_fields_mb->add_group_field( $group_field_id, [
 			'id'              => 'name',
-			'name'            => esc_html__( 'Field name', 'planet4-form-builder' ),
+			'name'            => esc_html__( 'Field ID', 'planet4-form-builder' ),
 			'type'            => 'text',
 			'sanitization_cb' => [ $this, 'sanitize_name' ],
 		] );
@@ -200,7 +214,7 @@ class Form_Builder {
 		$cmb_fields_mb->add_group_field( $group_field_id, [
 			'id'          => 'description',
 			'name'        => esc_html__( 'Description', 'planet4-form-builder' ),
-			'description' => esc_html__( 'Write a short description for this entry', 'planet4-form-builder' ),
+			'description' => esc_html__( 'Write a short description for this entry, if needed', 'planet4-form-builder' ),
 			'type'        => 'textarea_small',
 		] );
 
@@ -208,7 +222,7 @@ class Form_Builder {
 			'id'               => 'type',
 			'name'             => esc_html__( 'Field type', 'planet4-form-builder' ),
 			'type'             => 'select',
-			'show_option_none' => true,
+			'show_option_none' => esc_attr__( 'Choose field type', 'planet4-form-builder' ),
 			'options'          => [
 				'text'           => __( 'Text field', 'planet4-form-builder' ),
 				'textarea'       => __( 'Text area', 'planet4-form-builder' ),
@@ -221,13 +235,7 @@ class Form_Builder {
 
 		$cmb_fields_mb->add_group_field( $group_field_id, [
 			'id'   => 'label',
-			'name' => esc_html__( 'Field label', 'planet4-form-builder' ),
-			'type' => 'text',
-		] );
-
-		$cmb_fields_mb->add_group_field( $group_field_id, [
-			'id'   => 'default',
-			'name' => esc_html__( 'Field default value', 'planet4-form-builder' ),
+			'name' => esc_html__( 'Label', 'planet4-form-builder' ),
 			'type' => 'text',
 		] );
 
@@ -242,15 +250,14 @@ class Form_Builder {
 		] );
 
 		$cmb_fields_mb->add_group_field( $group_field_id, [
-			'id'          => 'value',
-			'name'        => esc_html__( 'Field value', 'planet4-form-builder' ),
-			'description' => esc_html__( 'used for checkbox, radio, and hidden fields.', 'planet4-form-builder' ),
-			'type'        => 'text',
+			'id'   => 'default',
+			'name' => esc_html__( 'Field default value', 'planet4-form-builder' ),
+			'type' => 'text',
 		] );
 
 		$cmb_fields_mb->add_group_field( $group_field_id, [
 			'id'          => 'class',
-			'name'        => esc_html__( 'Field class', 'planet4-form-builder' ),
+			'name'        => esc_html__( 'HTML class', 'planet4-form-builder' ),
 			'description' => esc_html__( 'add any arbitrary classes you need to affect the display.', 'planet4-form-builder' ),
 			'type'        => 'text',
 		] );

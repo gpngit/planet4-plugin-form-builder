@@ -1,4 +1,5 @@
-<form action="{{ form_submit_url }}" method="post" class="p4fb_form">
+<form id="p4en_form" action="{{ form_submit_url }}" method="post" class="p4fb_form p4en_form">
+	{{ fn( 'wp_nonce_field', nonce_action, nonce_name, false, false )|raw }}
 	<input type="hidden" name="action" value="{{ action }}">
 	<input type="hidden" name="p4_form_id" value="{{ post.ID }}">
 	<input type="hidden" name="p4_form_type" value="{{ post.p4_form_form_type }}">
