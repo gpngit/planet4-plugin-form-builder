@@ -16,11 +16,6 @@ class Form_Builder {
 	static $instance;
 
 	/**
-	 * The internal CPT name.
-	 */
-	const P4FB_FORM_CPT = 'p4-form';
-
-	/**
 	 *  Store the Template Loader instance
 	 *
 	 * @var  Form_Template_Loader
@@ -64,7 +59,7 @@ class Form_Builder {
 	 * @return string The updated string.
 	 */
 	function filter_enter_title_here( string $title, \WP_Post $post ) : string {
-		if ( self::P4FB_FORM_CPT === $post->post_type ) {
+		if ( P4FB_FORM_CPT === $post->post_type ) {
 			return __( 'Enter form name' );
 		}
 
@@ -136,7 +131,7 @@ class Form_Builder {
 			'rest_base'           => 'forms',
 		];
 
-		register_post_type( self::P4FB_FORM_CPT, $args );
+		register_post_type( P4FB_FORM_CPT, $args );
 	}
 
 	/**
@@ -149,7 +144,7 @@ class Form_Builder {
 		$cmb_form_mb = new_cmb2_box( [
 			'id'           => $prefix . 'form_metabox',
 			'title'        => esc_html__( 'Form details', 'planet4-form-builder' ),
-			'object_types' => [ self::P4FB_FORM_CPT ],
+			'object_types' => [ P4FB_FORM_CPT ],
 		] );
 
 		$cmb_form_mb->add_field( [
@@ -189,7 +184,7 @@ class Form_Builder {
 		$cmb_fields_mb = new_cmb2_box( [
 			'id'           => $prefix . 'fields_metabox',
 			'title'        => esc_html__( 'Form Fields', 'planet4-form-builder' ),
-			'object_types' => [ self::P4FB_FORM_CPT ],
+			'object_types' => [ P4FB_FORM_CPT ],
 		] );
 
 		// $group_field_id is the field id string, so in this case: $prefix . 'fields'
@@ -287,8 +282,8 @@ class Form_Builder {
 	 * @return string Our template or the original.
 	 */
 	public function template_include( string $original_template ) : string {
-		if ( self::P4FB_FORM_CPT === get_post_type() ) {
-			return self::$template_loader->get_template_part( 'single', self::P4FB_FORM_CPT, false );
+		if ( P4FB_FORM_CPT === get_post_type() ) {
+			return self::$template_loader->get_template_part( 'single', P4FB_FORM_CPT, false );
 		}
 
 		return $original_template;

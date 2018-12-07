@@ -21,7 +21,7 @@ class Form_Template_Loader extends \Gamajo_Template_Loader {
 	 *
 	 * @var string
 	 */
-	protected $filter_prefix = \P4FB\Form_Builder\Form_Builder::P4FB_FORM_CPT;
+	protected $filter_prefix = P4FB_FORM_CPT;
 
 	/**
 	 * Directory name where custom templates for this plugin should be found in the theme.
