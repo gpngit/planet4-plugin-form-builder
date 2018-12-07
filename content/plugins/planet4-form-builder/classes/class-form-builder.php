@@ -135,6 +135,22 @@ class Form_Builder {
 	}
 
 	/**
+	 * Return list of supported CRM types.
+	 * The array should be in the form of 'crm_abbrev' => 'CRM name'.
+	 * The name should be html escaped ready for use in a form etc.
+	 *
+	 * @return array The list of types.
+	 */
+	public function get_crm_type_options() : array {
+		return apply_filters( 'p4fb_get_crm_options', [
+			'en'  => esc_html__( 'Engaging Networks', 'planet4-form-builder' ),
+			'sf'  => esc_html__( 'Salesforce', 'planet4-form-builder' ),
+			'hs'  => esc_html__( 'Hubspot', 'planet4-form-builder' ),
+			'bsd' => esc_html__( 'BSD', 'planet4-form-builder' ),
+		] );
+	}
+
+	/**
 	 * Add the required CMB2 meta boxes and fields.
 	 */
 	public function add_fields() {
@@ -160,12 +176,7 @@ class Form_Builder {
 				'name'        => esc_html__( 'CMS type', 'planet4-form-builder' ),
 				'description' => esc_html__( 'Which CMS does this form map to?', 'planet4-form-builder' ),
 				'type'        => 'select',
-				'options'     => [
-					'en'  => esc_html__( 'Engaging Networks', 'planet4-form-builder' ),
-					'sf'  => esc_html__( 'Salesforce', 'planet4-form-builder' ),
-					'hs'  => esc_html__( 'Hubspot', 'planet4-form-builder' ),
-					'bsd' => esc_html__( 'BSD', 'planet4-form-builder' ),
-				],
+				'options'     => $this->get_crm_type_options(),
 			]
 		);
 
@@ -288,6 +299,5 @@ class Form_Builder {
 
 		return $original_template;
 	}
-
 
 }
