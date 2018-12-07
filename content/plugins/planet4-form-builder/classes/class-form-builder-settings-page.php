@@ -59,7 +59,7 @@ class Form_Builder_Settings_Page {
 
 		register_setting(
 			'p4fb_settings_group',
-			'p4fb_settings',
+			P4FB_SETTINGS_OPTION_NAME,
 			[
 				'type'              => 'string',
 				'description'       => 'CRM settings',
@@ -71,14 +71,14 @@ class Form_Builder_Settings_Page {
 			'p4fb_settings_section',
 			'',
 			'__return_empty_string',
-			'p4fb_settings'
+			P4FB_SETTINGS_OPTION_NAME
 		);
 
 		add_settings_field(
 			'p4fb-crm_type',
 			__( 'CRM Type', 'planet4-form-builder' ),
 			[ $this, 'render_crm_type_field' ],
-			'p4fb_settings',
+			P4FB_SETTINGS_OPTION_NAME,
 			'p4fb_settings_section'
 		);
 
@@ -86,7 +86,7 @@ class Form_Builder_Settings_Page {
 			'p4fb-api_key',
 			__( 'API Key', 'planet4-form-builder' ),
 			[ $this, 'render_api_key_field' ],
-			'p4fb_settings',
+			P4FB_SETTINGS_OPTION_NAME,
 			'p4fb_settings_section'
 		);
 
@@ -94,7 +94,7 @@ class Form_Builder_Settings_Page {
 			'p4fb-api_secret',
 			__( 'API Secret', 'planet4-form-builder' ),
 			[ $this, 'render_api_secret_field' ],
-			'p4fb_settings',
+			P4FB_SETTINGS_OPTION_NAME,
 			'p4fb_settings_section'
 		);
 
@@ -117,7 +117,7 @@ class Form_Builder_Settings_Page {
 			<form action="options.php" method="post">
 				<?php
 				settings_fields( 'p4fb_settings_group' );
-				do_settings_sections( 'p4fb_settings' );
+				do_settings_sections( P4FB_SETTINGS_OPTION_NAME );
 				submit_button( __( 'Save Settings', 'planet4-form-builder' ) );
 				?>
 			</form>
@@ -131,7 +131,7 @@ class Form_Builder_Settings_Page {
 	function render_crm_type_field() {
 
 		// Get current value.
-		$options       = get_option( 'p4fb_settings' );
+		$options       = get_option( P4FB_SETTINGS_OPTION_NAME );
 		$current_value = isset( $options['p4fb-crm_type'] ) ? $options['p4fb-crm_type'] : '';
 
 		?>
@@ -155,7 +155,7 @@ class Form_Builder_Settings_Page {
 	function render_api_key_field() {
 
 		// Get current value.
-		$options       = get_option( 'p4fb_settings' );
+		$options       = get_option( P4FB_SETTINGS_OPTION_NAME );
 		$current_value = isset( $options['p4fb-api_key'] ) ? $options['p4fb-api_key'] : '';
 
 		?>
@@ -170,7 +170,7 @@ class Form_Builder_Settings_Page {
 	function render_api_secret_field() {
 
 		// Get current value.
-		$options       = get_option( 'p4fb_settings' );
+		$options       = get_option( P4FB_SETTINGS_OPTION_NAME );
 		$current_value = isset( $options['p4fb-api_secret'] ) ? $options['p4fb-api_secret'] : '';
 
 		?>
