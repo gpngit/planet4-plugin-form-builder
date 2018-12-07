@@ -18,7 +18,7 @@ class Form_Builder {
 	/**
 	 * The internal CPT name.
 	 */
-	const P4FB_FORM_CPT = 'p4_form';
+	const P4FB_FORM_CPT = 'p4-form';
 
 	/**
 	 *  Store the Template Loader instance
