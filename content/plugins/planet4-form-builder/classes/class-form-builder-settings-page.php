@@ -75,7 +75,7 @@ class Form_Builder_Settings_Page {
 		);
 
 		add_settings_field(
-			'p4fb-crm_type',
+			'crm_type',
 			__( 'CRM Type', 'planet4-form-builder' ),
 			[ $this, 'render_crm_type_field' ],
 			P4FB_SETTINGS_OPTION_NAME,
@@ -83,7 +83,7 @@ class Form_Builder_Settings_Page {
 		);
 
 		add_settings_field(
-			'p4fb-api_key',
+			'api_key',
 			__( 'API Key', 'planet4-form-builder' ),
 			[ $this, 'render_api_key_field' ],
 			P4FB_SETTINGS_OPTION_NAME,
@@ -91,7 +91,7 @@ class Form_Builder_Settings_Page {
 		);
 
 		add_settings_field(
-			'p4fb-api_secret',
+			'api_secret',
 			__( 'API Secret', 'planet4-form-builder' ),
 			[ $this, 'render_api_secret_field' ],
 			P4FB_SETTINGS_OPTION_NAME,
@@ -132,10 +132,10 @@ class Form_Builder_Settings_Page {
 
 		// Get current value.
 		$options       = get_option( P4FB_SETTINGS_OPTION_NAME );
-		$current_value = isset( $options['p4fb-crm_type'] ) ? $options['p4fb-crm_type'] : '';
+		$current_value = isset( $options['crm_type'] ) ? $options['crm_type'] : '';
 
 		?>
-		<select name="p4fb_settings[p4fb-crm_type]" class="regular-text p4fb-crm_type_field">
+		<select name="p4fb_settings[crm_type]" class="regular-text crm_type_field">
 			<option value=""><?php echo __( 'Select CRM Type', 'planet4-form-builder' ); ?></option>
 			<?php
 			foreach ( Form_Builder::get_instance()->get_crm_type_options() as $val => $option ) {
@@ -156,10 +156,10 @@ class Form_Builder_Settings_Page {
 
 		// Get current value.
 		$options       = get_option( P4FB_SETTINGS_OPTION_NAME );
-		$current_value = isset( $options['p4fb-api_key'] ) ? $options['p4fb-api_key'] : '';
+		$current_value = isset( $options['api_key'] ) ? $options['api_key'] : '';
 
 		?>
-		<input type="text" name="p4fb_settings[p4fb-api_key]" class="regular-text p4fb-api_key_field" value="<?php echo esc_attr( $current_value ); ?>">
+		<input type="text" name="p4fb_settings[api_key]" class="regular-text api_key_field" value="<?php echo esc_attr( $current_value ); ?>">
 		<p class="description"><?php esc_html_e( 'Enter the API key', 'planet4-form-builder' ); ?></p>
 		<?php
 	}
@@ -171,10 +171,10 @@ class Form_Builder_Settings_Page {
 
 		// Get current value.
 		$options       = get_option( P4FB_SETTINGS_OPTION_NAME );
-		$current_value = isset( $options['p4fb-api_secret'] ) ? $options['p4fb-api_secret'] : '';
+		$current_value = isset( $options['api_secret'] ) ? $options['api_secret'] : '';
 
 		?>
-		<input type="text" name="p4fb_settings[p4fb-api_secret]" class="regular-text p4fb-api_secret_field" value="<?php echo esc_attr( $current_value ); ?>">
+		<input type="text" name="p4fb_settings[api_secret]" class="regular-text api_secret_field" value="<?php echo esc_attr( $current_value ); ?>">
 		<p class="description"><?php esc_html_e( 'Enter the API secret', 'planet4-form-builder' ); ?></p>
 		<?php
 	}
@@ -189,18 +189,18 @@ class Form_Builder_Settings_Page {
 	 */
 	function sanitize_cb( array $input ) : array {
 		if (
-			! isset( $input['p4fb-crm_type'] ) ||
-			! in_array( $input['p4fb-crm_type'], array_keys( Form_Builder::get_instance()->get_crm_type_options() ), true )
+			! isset( $input['crm_type'] ) ||
+			! in_array( $input['crm_type'], array_keys( Form_Builder::get_instance()->get_crm_type_options() ), true )
 		) {
-			$input['p4fb-crm_type'] = '';
+			$input['crm_type'] = '';
 		}
 
-		if ( isset( $input['p4fb-api_key'] ) ) {
-			$input['p4fb-api_key'] = wp_strip_all_tags( $input['p4fb-api_key'] );
+		if ( isset( $input['api_key'] ) ) {
+			$input['api_key'] = wp_strip_all_tags( $input['api_key'] );
 		}
 
-		if ( isset( $input['p4fb-api_secret'] ) ) {
-			$input['p4fb-api_secret'] = wp_strip_all_tags( $input['p4fb-api_secret'] );
+		if ( isset( $input['api_secret'] ) ) {
+			$input['api_secret'] = wp_strip_all_tags( $input['api_secret'] );
 		}
 
 		return $input;
