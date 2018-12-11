@@ -16,14 +16,6 @@ class Form_Mapping {
 	static $instance;
 
 	/**
-	 *  Store the Template Loader instance
-	 *
-	 * @var  Form_Template_Loader
-	 */
-	protected static $template_loader;
-
-
-	/**
 	 * Create singleton instance.
 	 *
 	 * @return Form_Mapping
