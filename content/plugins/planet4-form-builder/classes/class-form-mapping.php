@@ -159,7 +159,7 @@ class Form_Mapping {
 
 
 		/**
-		 * Repeatable Field Groups
+		 * Field Mappings
 		 */
 		$cmb_fields_mb = new_cmb2_box( [
 			'id'           => $prefix . 'metabox',
@@ -175,6 +175,11 @@ class Form_Mapping {
 
 	}
 
+	/**
+	 * Add CMB2 fileds dynmically based on the chosen fom definition.
+	 *
+	 * @param $cmb The CMB2 object.
+	 */
 	function add_fields_dynamically_to_box( $cmb ) {
 		if ( $cmb->object_id() ) {
 			// Loop through however many fields are in the associated form
@@ -196,6 +201,11 @@ class Form_Mapping {
 		}
 	}
 
+	/**
+	 * Generate an option list of all the from definitions.
+	 *
+	 * @return array
+	 */
 	public function get_crm_form_options() : array {
 		$my_query = new WP_Query( [
 			'post_type'      => P4FB_FORM_CPT,
