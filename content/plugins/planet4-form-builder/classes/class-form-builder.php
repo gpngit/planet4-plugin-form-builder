@@ -60,7 +60,7 @@ class Form_Builder {
 	 */
 	function filter_enter_title_here( string $title, \WP_Post $post ) : string {
 		if ( P4FB_FORM_CPT === $post->post_type ) {
-			return __( 'Enter form name' );
+			return __( 'Enter form name', 'planet4-form-builder' );
 		}
 
 		return $title;
