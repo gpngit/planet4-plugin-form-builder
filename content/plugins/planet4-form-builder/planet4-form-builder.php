@@ -26,12 +26,14 @@ defined( 'ABSPATH' ) or die( 'Direct access is forbidden !' );
 
 require_once __DIR__ . '/constants.php';
 require_once __DIR__ . '/classes/class-form-builder.php';
+require_once __DIR__ . '/classes/class-form-mapping.php';
 if ( ! class_exists( 'Gamajo_Template_Loader' ) ) {
 	require plugin_dir_path( __FILE__ ) . 'class-gamajo-template-loader.php';
 }
 require_once __DIR__ . '/classes/class-form-template-loader.php';
 add_action( 'plugins_loaded', function () {
 	Form_Builder::get_instance()->load();
+	Form_Mapping::get_instance()->load();
 } );
 
 if ( is_admin() ) {

@@ -6,9 +6,14 @@
 namespace P4FB\Form_Builder;
 
 /**
- * The internal CPT name.
+ * The internal Form CPT name.
  */
 define( 'P4FB_FORM_CPT', 'p4-form' );
+
+/**
+ * The internal Mapping CPT name.
+ */
+define( 'P4FB_MAPPING_CPT', 'p4-mapping' );
 
 /**
  * The plugins root directory.
