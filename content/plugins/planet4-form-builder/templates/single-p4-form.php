@@ -8,12 +8,13 @@ namespace P4FB\Form_Builder\Templates;
 use Timber\Post;
 use Timber\Timber;
 
-$context                    = Timber::get_context();
-$context['post']            = new Post();
-$context['form_submit_url'] = admin_url( 'admin-post.php' );
-$context['action']          = P4FB_FORM_ACTION;
-$context['nonce_action']    = P4FB_FORM_ACTION . '-' . $context['post']->ID;
-$context['nonce_name']      = P4FB_FORM_NONCE;
+$context                     = Timber::get_context();
+$context['post']             = new Post();
+$context['form_submit_url']  = admin_url( 'admin-post.php' );
+$context['action']           = P4FB_FORM_ACTION;
+$context['nonce_action']     = P4FB_FORM_ACTION . '-' . $context['post']->ID;
+$context['nonce_name']       = P4FB_FORM_NONCE;
+$context['required_message'] = __( '* required', 'planet4-form-builder' );
 
 // process the field options here for easier rendering
 foreach ( $context['post']->p4_form_fields as $index => $field ) {
@@ -35,6 +36,8 @@ foreach ( $context['post']->p4_form_fields as $index => $field ) {
 		$context['post']->p4_form_fields[ $index ]['options'] = $new_options;
 	}
 }
+
+//@TODO Derive/set $context['current_value']??
 
 Timber::render(
 	[

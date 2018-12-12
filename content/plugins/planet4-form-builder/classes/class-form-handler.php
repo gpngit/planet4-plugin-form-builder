@@ -52,7 +52,7 @@ class Form_Handler {
 			exit;
 		}
 
-		$form_type = Form_Builder::get_instance()->sanitize_form_type( $_POST['p4_form_type'] );
+		$form_type = Form_Builder::get_instance()->validate_form_type( $_POST['p4_form_type'] );
 		// Get the form details
 		$form      = get_post( $form_id );
 		$form_data = [];
@@ -61,13 +61,36 @@ class Form_Handler {
 		$fields = get_post_meta( $form_id, 'p4_form_fields', true );
 		foreach ( $fields as $field ) {
 			$field_name = $field['name'];
-			$value      = apply_filters( 'p4fb_sanitize_field', $_POST[ $field_name ] ?? '', $form, $field );
-			$error      = apply_filters( 'p4fb_validate_field', $_POST[ $field_name ] ?? '', $form, $field );
-			if ( $error !== true ) {
+
+			/**
+			 * Sanitize the value submitted for the specific field type.
+			 *
+			 * @param string|array $value The value from the form submission or empty string.
+			 * @param \WP_Post     $form  The CRM form.
+			 * @param array        $field The field definition.
+			 *
+			 * @return string|array The sanitized value.
+			 */
+			$value = apply_filters( "p4fb_sanitize_field_{$field['type']}", $_POST[ $field_name ] ?? '', $form, $field );
+
+			/**
+			 * Validate the value submitted for the specific field type.
+			 *
+			 * @param string|array $value The sanitized value from the form submission or empty string.
+			 * @param \WP_Post     $form  The CRM form.
+			 * @param array        $field The field definition.
+			 * @param bool|array   $error The current error condition.
+			 *
+			 * @return boolean|string The current error. False if no error. Error message if there is an error.
+			 *
+			 */
+			$error = apply_filters( "p4fb_validate_field_{$field['type']}", $value ?? '', $form, $field, false );
+			if ( $error !== false ) {
 				$errors[ $field_name ] = $error;
 			}
 			$form_data[ $field_name ] = $value;
 		}
+
 		// save record and trigger post action
 		if ( empty( $errors ) ) {
 			do_action( 'p4fb_save_form_submission', $form, $form_data );

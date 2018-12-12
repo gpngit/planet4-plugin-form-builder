@@ -2,7 +2,11 @@
 	<legend>{{ field.label | e('esc_html') }}</legend>
 	{% for val,option in field.options %}
 		<label class="p4fb-field p4fb-field-{{ field.type | e('html_attr') }} {{ field.name | e('html_attr') }}">
-			<input type="radio" name="{{ field.name }}[]" value="{{ val | e('html_attr') }}">
+			<input type="radio" name="{{ field.name }}[]" value="{{ val | e('html_attr') }}"
+					{% if  field.current_value == val %}
+						checked="checked"
+					{% endif %}
+			>
 			{{ option | e('esc_html') }}
 		</label>
 	{% endfor %}

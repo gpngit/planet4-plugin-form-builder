@@ -1,4 +1,7 @@
 <label class="p4fb-field p4fb-field-{{ field.type | e('html_attr') }} {{ field.name | e('html_attr') }}">
 	{{ field.label | e('esc_html') }}
-	<input type="text" name="{{ field.name }}" value="{{field.value}}" class="{{ field.class }}">
+	{% if (field.required) %}
+		<small>{{ required_mesage }}</small>
+	{% endif %}
+	<input type="text" name="{{ field.name }}" value="{{ field.value }}" class="{{ field.class }}">
 </label>

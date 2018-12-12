@@ -51,6 +51,23 @@ class Form_Builder {
 		add_action( 'cmb2_init', [ $this, 'add_fields' ] );
 		add_filter( 'enter_title_here', [ $this, 'filter_enter_title_here' ], 10, 2 );
 
+		/* Default sanitization */
+		add_filter( 'p4fb_sanitize_field_text', [ $this, 'sanitize_field_text' ], 10, 3 );
+		add_filter( 'p4fb_sanitize_field_textarea', [ $this, 'sanitize_field_textarea' ], 10, 3 );
+		add_filter( 'p4fb_sanitize_field_select', [ $this, 'sanitize_field_select' ], 10, 3 );
+		add_filter( 'p4fb_sanitize_field_checkbox', [ $this, 'sanitize_field_checkbox' ], 10, 3 );
+		add_filter( 'p4fb_sanitize_field_checkbox-group', [ $this, 'sanitize_field_checkbox_group' ], 10, 3 );
+		add_filter( 'p4fb_sanitize_field_radio-group', [ $this, 'sanitize_field_radio_group' ], 10, 3 );
+
+		/* Default validation */
+		add_filter( 'p4fb_validate_field_text', [ $this, 'validate_field_text' ], 10, 4 );
+		add_filter( 'p4fb_validate_field_textarea', [ $this, 'validate_field_textarea' ], 10, 4 );
+		add_filter( 'p4fb_validate_field_select', [ $this, 'validate_field_select' ], 10, 4 );
+		add_filter( 'p4fb_validate_field_checkbox', [ $this, 'validate_field_checkbox' ], 10, 4 );
+		add_filter( 'p4fb_validate_field_checkbox-group', [ $this, 'validate_field_checkbox_group' ], 10, 4 );
+		add_filter( 'p4fb_validate_field_radio-group', [ $this, 'validate_field_radio_group' ], 10, 4 );
+
+
 		Timber::$locations = [ P4FB_PLUGIN_DIR . '/templates/views' ];
 	}
 
@@ -161,7 +178,7 @@ class Form_Builder {
 	 *
 	 * @return bool
 	 */
-	public function sanitize_form_type( $form_type ) {
+	public function validate_form_type( $form_type ) {
 		$form_type = sanitize_text_field( $form_type );
 		if ( in_array( $form_type, array_keys( $this->get_crm_type_options() ), true ) ) {
 			return $form_type;
@@ -276,10 +293,17 @@ class Form_Builder {
 		] );
 
 		$cmb_fields_mb->add_group_field( $group_field_id, [
-			'id'   => 'value',
-			'name' => esc_html__( 'Field default value', 'planet4-form-builder' ),
+			'id'          => 'value',
+			'name'        => esc_html__( 'Field default value', 'planet4-form-builder' ),
 			'description' => esc_html__( 'Default value for a text field or the value for a single checkbox.', 'planet4-form-builder' ),
-			'type' => 'text',
+			'type'        => 'text',
+		] );
+
+		$cmb_fields_mb->add_group_field( $group_field_id, [
+			'id'          => 'required',
+			'name'        => esc_html__( 'Required', 'planet4-form-builder' ),
+			'description' => esc_html__( 'Is this field required?', 'planet4-form-builder' ),
+			'type'        => 'checkbox',
 		] );
 
 		$cmb_fields_mb->add_group_field( $group_field_id, [
@@ -320,5 +344,233 @@ class Form_Builder {
 
 		return $original_template;
 	}
+
+	/**
+	 * Simple sanitization for text field.
+	 *
+	 * @param string|array $value The value from the form submission or empty string.
+	 * @param \WP_Post     $form  The CRM form.
+	 * @param array        $field The field definition.
+	 *
+	 * @return string|array The sanitized value.
+	 */
+	public function sanitize_field_text( $value, \WP_Post $form, array $field ) {
+		return sanitize_text_field( $value );
+	}
+
+	/**
+	 * Simple sanitization for textarea field.
+	 *
+	 * @param string|array $value The value from the form submission or empty string.
+	 * @param \WP_Post     $form  The CRM form.
+	 * @param array        $field The field definition.
+	 *
+	 * @return string|array The sanitized value.
+	 */
+	public function sanitize_field_textarea( $value, \WP_Post $form, array $field ) {
+		return sanitize_textarea_field( $value );
+	}
+
+	/**
+	 * Simple sanitization for select field.
+	 *
+	 * @param string|array $value The value from the form submission or empty string.
+	 * @param \WP_Post     $form  The CRM form.
+	 * @param array        $field The field definition.
+	 *
+	 * @return string|array The sanitized value.
+	 */
+	public function sanitize_field_select( $value, \WP_Post $form, array $field ) {
+		return sanitize_text_field( $value );
+	}
+
+	/**
+	 * Simple sanitization for checkbox field.
+	 *
+	 * @param string|array $value The value from the form submission or empty string.
+	 * @param \WP_Post     $form  The CRM form.
+	 * @param array        $field The field definition.
+	 *
+	 * @return string|array The sanitized value.
+	 */
+	public function sanitize_field_checkbox( $value, \WP_Post $form, array $field ) {
+		return sanitize_text_field( $value );
+	}
+
+	/**
+	 * Simple sanitization for checkbox group field.
+	 *
+	 * @param string|array $value The value from the form submission or empty string.
+	 * @param \WP_Post     $form  The CRM form.
+	 * @param array        $field The field definition.
+	 *
+	 * @return string|array The sanitized value.
+	 */
+	public function sanitize_field_checkbox_group( $value, \WP_Post $form, array $field ) {
+		if ( is_array( $value ) ) {
+			return array_map( 'sanitize_text_field', $value );
+		}
+
+		return sanitize_text_field( $value );
+	}
+
+	/**
+	 * Simple sanitization for radio button fields.
+	 *
+	 * @param string|array $value The value from the form submission or empty string.
+	 * @param \WP_Post     $form  The CRM form.
+	 * @param array        $field The field definition.
+	 *
+	 * @return string|array The sanitized value.
+	 */
+	public function sanitize_field_radio_group( $value, \WP_Post $form, array $field ) {
+		if ( is_array( $value ) ) {
+			return sanitize_text_field( $value[0] );
+		}
+
+		return sanitize_text_field( $value );
+	}
+
+	/**
+	 * Simple validation for text field.
+	 *
+	 * @param string|array $value The value from the form submission or empty string.
+	 * @param \WP_Post     $form  The CRM form.
+	 * @param array        $field The field definition.
+	 * @param bool|array   $error The current error condition.
+	 *
+	 * @return boolean|string False if no error. Error message if there is an error.
+	 */
+	public function validate_field_text( $value, \WP_Post $form, array $field, $error ) {
+		if ( isset( $field['required'] ) && $field['required'] && empty( $value ) ) {
+			return __( 'Required field missing.', 'planet4-form-builder' );
+		}
+
+		return false;
+	}
+
+	/**
+	 * Simple validation for textarea field.
+	 *
+	 * @param string|array $value The value from the form submission or empty string.
+	 * @param \WP_Post     $form  The CRM form.
+	 * @param array        $field The field definition.
+	 * @param bool|array   $error The current error condition.
+	 *
+	 * @return boolean|string False if no error. Error message if there is an error.
+	 */
+	public function validate_field_textarea( $value, \WP_Post $form, array $field, $error ) {
+		if ( isset( $field['required'] ) && $field['required'] && empty( $value ) ) {
+			return __( 'Required field missing.', 'planet4-form-builder' );
+		}
+
+		return false;
+	}
+
+	/**
+	 * Simple validation for select field.
+	 *
+	 * @param string|array $value The value from the form submission or empty string.
+	 * @param \WP_Post     $form  The CRM form.
+	 * @param array        $field The field definition.
+	 * @param bool|array   $error The current error condition.
+	 *
+	 * @return boolean|string False if no error. Error message if there is an error.
+	 */
+	public function validate_field_select( $value, \WP_Post $form, array $field, $error ) {
+		$options = $this->get_options( $field );
+		if ( in_array( $value, array_keys( $options ), true ) || in_array( $value, $options, true ) ) {
+			return false;
+		}
+
+		return __( 'You must select an option.', 'planet4-form-builder' );
+	}
+
+	/**
+	 * Simple validation for checkbox field.
+	 *
+	 * @param string|array $value The value from the form submission or empty string.
+	 * @param \WP_Post     $form  The CRM form.
+	 * @param array        $field The field definition.
+	 * @param bool|array   $error The current error condition.
+	 *
+	 * @return boolean|string False if no error. Error message if there is an error.
+	 */
+	public function validate_field_checkbox( $value, \WP_Post $form, array $field, $error ) {
+		if ( isset( $field['required'] ) && $field['required'] && empty( $value ) ) {
+			return __( 'You must check the box.', 'planet4-form-builder' );
+		}
+
+		return false;
+	}
+
+	/**
+	 * Simple validation for checkbox group field.
+	 *
+	 * @param string|array $value The value from the form submission or empty string.
+	 * @param \WP_Post     $form  The CRM form.
+	 * @param array        $field The field definition.
+	 * @param bool|array   $error The current error condition.
+	 *
+	 * @return boolean|array The current error. False if no error. An array [ 'field_name' => 'error message' ] is there is an error.
+	 */
+	public function validate_field_checkbox_group( $value, \WP_Post $form, array $field, $error ) {
+		$options = $this->get_options( $field );
+		if ( isset( $field['required'] ) && $field['required'] && empty( $value ) ) {
+			return __( 'You must check an option.', 'planet4-form-builder' );
+		}
+
+		if ( ! in_array( $value, array_keys( $options ), true ) && ! in_array( $value, $options, true ) ) {
+			return __( 'You must check an option.', 'planet4-form-builder' );
+		}
+
+		return false;
+	}
+
+	/**
+	 * Simple validation for radio group field.
+	 *
+	 * @param string|array $value The value from the form submission or empty string.
+	 * @param \WP_Post     $form  The CRM form.
+	 * @param array        $field The field definition.
+	 * @param bool|array   $error The current error condition.
+	 *
+	 * @return boolean|array The current error. False if no error. An array [ 'field_name' => 'error message' ] is there is an error.
+	 */
+	public function validate_field_radio_group( $value, \WP_Post $form, array $field, $error ) {
+		$options = $this->get_options( $field );
+		if ( ! in_array( $value, array_keys( $options ), true ) && ! in_array( $value, $options, true ) ) {
+			return __( 'You must choose an option.', 'planet4-form-builder' );
+		}
+
+		return false;
+	}
+
+	/**
+	 * Retrieve the field options.
+	 *
+	 * @param array $field The field definition.
+	 *
+	 * @return array The parsed options as [ 'option_value' => 'option' ] or [ 'option', 'option', 'option'...]
+	 */
+	public function get_options( array $field ) {
+		$options     = $field['options'];
+		$options     = explode( "\n", $options );
+		$new_options = [];
+		foreach ( $options as $option ) {
+			if ( empty( trim( $option ) ) ) {
+				continue;
+			}
+			$parts = explode( '|', $option, 2 );
+			if ( count( $parts ) > 1 ) {
+				$new_options[ trim( $parts[0] ) ] = trim( $parts[1] );
+			} else {
+				$new_options[ trim( $option ) ] = trim( $option );
+			}
+		}
+
+		return $new_options;
+	}
+
 
 }

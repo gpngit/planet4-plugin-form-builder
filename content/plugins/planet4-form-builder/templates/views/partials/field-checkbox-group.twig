@@ -6,4 +6,7 @@
 			{{ option | e('esc_html') }}
 		</label>
 	{% endfor %}
+	{% if (field.required) %}
+		<small>{{ required_mesage }}</small>
+	{% endif %}
 </fieldset>
