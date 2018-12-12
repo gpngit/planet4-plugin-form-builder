@@ -183,11 +183,11 @@ class Form_Mapping {
 	function add_fields_dynamically_to_box( $cmb ) {
 		if ( $cmb->object_id() ) {
 			// Loop through however many fields are in the associated form
-			$field_id = get_post_meta( $cmb->object_id(), 'p4_form_mapping_form_id', true );
-			if ( ! $field_id ) {
+			$form_id = get_post_meta( $cmb->object_id(), 'p4_form_mapping_form_id', true );
+			if ( ! $form_id ) {
 				return;
 			}
-			$fields = get_post_meta( $field_id, 'p4_form_fields', true );
+			$fields = get_post_meta( $form_id, 'p4_form_fields', true );
 
 			foreach ( $fields as $field ) {
 				$cmb->add_field( [
