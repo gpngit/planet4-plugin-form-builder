@@ -7,6 +7,10 @@ namespace P4FB\Form_Builder;
 
 use Timber\Timber;
 
+/**
+ * Class Form_Builder
+ * @package P4FB\Form_Builder
+ */
 class Form_Builder {
 	/**
 	 *  Store the singleton instance
@@ -151,6 +155,22 @@ class Form_Builder {
 	}
 
 	/**
+	 * Check the pased form type is an allowed value.
+	 *
+	 * @param mixed $form_type
+	 *
+	 * @return bool
+	 */
+	public function sanitize_form_type( $form_type ) {
+		$form_type = sanitize_text_field( $form_type );
+		if ( in_array( $form_type, array_keys( $this->get_crm_type_options() ), true ) ) {
+			return $form_type;
+		}
+
+		return '';
+	}
+
+	/**
 	 * Add the required CMB2 meta boxes and fields.
 	 */
 	public function add_fields() {
@@ -256,8 +276,9 @@ class Form_Builder {
 		] );
 
 		$cmb_fields_mb->add_group_field( $group_field_id, [
-			'id'   => 'default',
+			'id'   => 'value',
 			'name' => esc_html__( 'Field default value', 'planet4-form-builder' ),
+			'description' => esc_html__( 'Default value for a text field or the value for a single checkbox.', 'planet4-form-builder' ),
 			'type' => 'text',
 		] );
 
