@@ -25,3 +25,6 @@ define( 'P4FB_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
  * Option name for settings in options table
  */
 define( 'P4FB_SETTINGS_OPTION_NAME', 'p4fb_settings' );
+
+define( 'P4FB_FORM_ACTION', 'p4fb_form_submit' );
+define( 'P4FB_FORM_NONCE', '_p4fb_form' );

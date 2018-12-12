@@ -10,12 +10,12 @@ use Timber\Timber;
 
 $context                    = Timber::get_context();
 $context['post']            = new Post();
-$context['form_submit_url'] = admin_url( 'admin_post.php' );
-$context['action']          = 'p4fb_form_submit';
-$context['nonce_action']    = $context['action'] . '-' . $context['post']->ID;
-$context['nonce_name']    = '_p4fb_form';
+$context['form_submit_url'] = admin_url( 'admin-post.php' );
+$context['action']          = P4FB_FORM_ACTION;
+$context['nonce_action']    = P4FB_FORM_ACTION . '-' . $context['post']->ID;
+$context['nonce_name']      = P4FB_FORM_NONCE;
 
-// process the field options for easier rendering
+// process the field options here for easier rendering
 foreach ( $context['post']->p4_form_fields as $index => $field ) {
 	if ( ( 'select' === $field['type'] ) || ( 'checkbox-group' === $field['type'] ) || ( 'radio-group' === $field['type'] ) ) {
 		$options     = $field['options'];
