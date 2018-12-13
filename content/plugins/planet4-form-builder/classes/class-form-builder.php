@@ -515,12 +515,12 @@ class Form_Builder {
 	 * @return boolean|array The current error. False if no error. An array [ 'field_name' => 'error message' ] is there is an error.
 	 */
 	public function validate_field_checkbox_group( $value, \WP_Post $form, array $field, $error ) {
-		$options = $this->get_options( $field );
 		if ( isset( $field['required'] ) && $field['required'] && empty( $value ) ) {
 			return __( 'You must check an option.', 'planet4-form-builder' );
 		}
 
-		if ( ! in_array( $value, array_keys( $options ), true ) && ! in_array( $value, $options, true ) ) {
+		$options = $this->get_options( $field );
+		if ( ! array_intersect( $value, array_keys( $options ) ) && ! array_intersect( $value, $options ) ) {
 			return __( 'You must check an option.', 'planet4-form-builder' );
 		}
 
