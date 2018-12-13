@@ -520,7 +520,7 @@ class Form_Builder {
 		}
 
 		$options = $this->get_options( $field );
-		if ( ! array_intersect( $value, array_keys( $options ) ) && ! array_intersect( $value, $options ) ) {
+		if ( ! array_intersect( (array) $value, array_keys( $options ) ) && ! array_intersect( (array) $value, $options ) ) {
 			return __( 'You must check an option.', 'planet4-form-builder' );
 		}
 
