@@ -66,7 +66,7 @@ class Form_Handler {
 			 * Sanitize the value submitted for the specific field type.
 			 *
 			 * @param string|array $value The value from the form submission or empty string.
-			 * @param \WP_Post     $form  The CRM form.
+			 * @param WP_Post      $form  The CRM form.
 			 * @param array        $field The field definition.
 			 *
 			 * @return string|array The sanitized value.
@@ -77,7 +77,7 @@ class Form_Handler {
 			 * Validate the value submitted for the specific field type.
 			 *
 			 * @param string|array $value The sanitized value from the form submission or empty string.
-			 * @param \WP_Post     $form  The CRM form.
+			 * @param WP_Post      $form  The CRM form.
 			 * @param array        $field The field definition.
 			 * @param bool|array   $error The current error condition.
 			 *
@@ -91,11 +91,38 @@ class Form_Handler {
 			$form_data[ $field_name ] = $value;
 		}
 
-		// save record and trigger post action
+		// save record and trigger actions
 		if ( empty( $errors ) ) {
-			do_action( 'p4fb_save_form_submission', $form, $form_data );
-			do_action( 'p4fb_post_save_form', $form, $form_data );
-			do_action( "p4fb_post_save_form_{$form_type}", $form, $form_data );
+			/**
+			 * Save away the form submission. May only be temporary.
+			 * The action should update the errors array with a saved reference (usually a post id) indexed by 'id',
+			 *      or an error indication indexed by 'error'.
+			 *
+			 * @param array   The arguments
+			 *                       array $errors (passed by reference).
+			 *                       \WP_Post  $form The CRM form.
+			 *                       array $form_data The form submission data.
+			 *
+			 */
+
+			do_action_ref_array( 'p4fb_save_form_submission', [
+				&$errors,
+				$form,
+				$form_data,
+			] );
+
+			/**
+			 * Post process the form entry. Likely send to a CRM or queue it to be sent.
+			 *
+			 * @param WP_Post $form      The CRM form.
+			 * @param array   $form_data The form submission data.
+			 * @param string  $entry     The entry reference.
+			 *
+			 */
+			if ( isset( $errors['id'] ) ) {
+				do_action( 'p4fb_post_save_form', $form, $form_data, $errors['id'] );
+				do_action( "p4fb_post_save_form_{$form_type}", $form, $form_data, $errors['id'] );
+			}
 		}
 	}
 
