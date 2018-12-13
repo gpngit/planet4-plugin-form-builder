@@ -94,13 +94,6 @@ class Form_Mapping {
 			'filter_items_list'     => __( 'Filter forms list', 'planet4-form-builder' ),
 		];
 
-		$rewrite = [
-			'slug'       => 'form',
-			'with_front' => true,
-			'pages'      => true,
-			'feeds'      => false,
-		];
-
 		$args = [
 			'label'               => __( 'Mapping', 'planet4-form-builder' ),
 			'description'         => __( 'Planet 4 Form Mappings custom post type.', 'planet4-form-builder' ),
