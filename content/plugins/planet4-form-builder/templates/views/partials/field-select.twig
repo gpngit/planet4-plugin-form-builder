@@ -1,7 +1,7 @@
 <label class="p4fb-field p4fb-field-{{ field.type | e('html_attr') }} {{ field.name | e('html_attr') }}">
 	{{ field.label | e('esc_html') }}
 	{% if (field.required) %}
-		<small>{{ required_mesage }}</small>
+		<small>{{ required_message }}</small>
 	{% endif %}
 	<select name="{{ field.name }}">
 		{% for val, option in field.options %}
