@@ -123,7 +123,11 @@ class Form_Handler {
 				do_action( 'p4fb_post_save_form', $form, $form_data, $errors['id'] );
 				do_action( "p4fb_post_save_form_{$form_type}", $form, $form_data, $errors['id'] );
 			}
+		} else {
+			// Handle errors (likely redisplay the same page)
+			//@TODO echo 'errors are ' . var_export( $errors, true );
 		}
+
 	}
 
 }
