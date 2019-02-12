@@ -82,21 +82,13 @@ class Form_Builder_Settings_Page {
 			'p4fb_settings_section'
 		);
 
-		add_settings_field(
-			'api_key',
-			__( 'API Key', 'planet4-form-builder' ),
-			[ $this, 'render_api_key_field' ],
-			P4FB_SETTINGS_OPTION_NAME,
-			'p4fb_settings_section'
-		);
-
-		add_settings_field(
-			'api_secret',
-			__( 'API Secret', 'planet4-form-builder' ),
-			[ $this, 'render_api_secret_field' ],
-			P4FB_SETTINGS_OPTION_NAME,
-			'p4fb_settings_section'
-		);
+		/**
+		 * Action P4 Form builder add settings section.
+		 * A CRM specific add-on can add it's own section and fields here.
+		 *
+		 * @param string $settings_option The option key for the settings.
+		 */
+		do_action( P4FB_KEY_PREFIX . 'add_settings_section', P4FB_SETTINGS_OPTION_NAME );
 
 	}
 
@@ -150,36 +142,6 @@ class Form_Builder_Settings_Page {
 	}
 
 	/**
-	 * Render the API Key text field.
-	 */
-	function render_api_key_field() {
-
-		// Get current value.
-		$options       = get_option( P4FB_SETTINGS_OPTION_NAME );
-		$current_value = isset( $options['api_key'] ) ? $options['api_key'] : '';
-
-		?>
-		<input type="text" name="p4fb_settings[api_key]" class="regular-text api_key_field" value="<?php echo esc_attr( $current_value ); ?>">
-		<p class="description"><?php esc_html_e( 'Enter the API key', 'planet4-form-builder' ); ?></p>
-		<?php
-	}
-
-	/**
-	 * Render the API secret text field.
-	 */
-	function render_api_secret_field() {
-
-		// Get current value.
-		$options       = get_option( P4FB_SETTINGS_OPTION_NAME );
-		$current_value = isset( $options['api_secret'] ) ? $options['api_secret'] : '';
-
-		?>
-		<input type="text" name="p4fb_settings[api_secret]" class="regular-text api_secret_field" value="<?php echo esc_attr( $current_value ); ?>">
-		<p class="description"><?php esc_html_e( 'Enter the API secret', 'planet4-form-builder' ); ?></p>
-		<?php
-	}
-
-	/**
 	 * Validate input.
 	 * Check whether to action the create days checkboxes.
 	 *
@@ -195,13 +157,7 @@ class Form_Builder_Settings_Page {
 			$input['crm_type'] = '';
 		}
 
-		if ( isset( $input['api_key'] ) ) {
-			$input['api_key'] = wp_strip_all_tags( $input['api_key'] );
-		}
-
-		if ( isset( $input['api_secret'] ) ) {
-			$input['api_secret'] = wp_strip_all_tags( $input['api_secret'] );
-		}
+		$input = apply_filters( P4FB_KEY_PREFIX . 'sanitize_callback', $input );
 
 		return $input;
 	}
