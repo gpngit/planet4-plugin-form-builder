@@ -192,16 +192,15 @@ class Form_Builder {
 	 */
 	public function add_fields() {
 		// Fields meta box
-		$prefix = 'p4_form_';
 
 		$cmb_form_mb = new_cmb2_box( [
-			'id'           => $prefix . 'form_metabox',
+			'id'           => P4FB_KEY_PREFIX . 'form_metabox',
 			'title'        => esc_html__( 'Form details', 'planet4-form-builder' ),
 			'object_types' => [ P4FB_FORM_CPT ],
 		] );
 
 		$cmb_form_mb->add_field( [
-			'id'          => $prefix . 'description',
+			'id'          => P4FB_KEY_PREFIX . 'description',
 			'name'        => esc_html__( 'Description', 'planet4-form-builder' ),
 			'description' => esc_html__( 'Write a short description for this form', 'planet4-form-builder' ),
 			'type'        => 'textarea_small',
@@ -209,7 +208,7 @@ class Form_Builder {
 
 		$cmb_form_mb->add_field(
 			[
-				'id'          => $prefix . 'form_type',
+				'id'          => P4FB_KEY_PREFIX . 'form_type',
 				'name'        => esc_html__( 'CMS type', 'planet4-form-builder' ),
 				'description' => esc_html__( 'Which CMS does this form map to?', 'planet4-form-builder' ),
 				'type'        => 'select',
@@ -218,7 +217,7 @@ class Form_Builder {
 		);
 
 		$cmb_form_mb->add_field( [
-			'id'          => $prefix . 'submit_text',
+			'id'          => P4FB_KEY_PREFIX . 'submit_text',
 			'name'        => esc_html__( 'Submit button', 'planet4-form-builder' ),
 			'description' => esc_html__( 'What should the submit button say?', 'planet4-form-builder' ),
 			'type'        => 'text',
@@ -230,14 +229,14 @@ class Form_Builder {
 		 * Repeatable Field Groups
 		 */
 		$cmb_fields_mb = new_cmb2_box( [
-			'id'           => $prefix . 'fields_metabox',
+			'id'           => P4FB_KEY_PREFIX . 'fields_metabox',
 			'title'        => esc_html__( 'Form Fields', 'planet4-form-builder' ),
 			'object_types' => [ P4FB_FORM_CPT ],
 		] );
 
-		// $group_field_id is the field id string, so in this case: $prefix . 'fields'
+		// $group_field_id is the field id string, so in this case: P4FB_KEY_PREFIX . 'fields'
 		$group_field_id = $cmb_fields_mb->add_field( [
-			'id'      => $prefix . 'fields',
+			'id'      => P4FB_KEY_PREFIX . 'fields',
 			'type'    => 'group',
 			'options' => [
 				'group_title'   => esc_html__( 'Field {#}', 'planet4-form-builder' ), // The {#} gets replaced by row number.
