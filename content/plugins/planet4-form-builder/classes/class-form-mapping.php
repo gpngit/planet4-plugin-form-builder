@@ -37,9 +37,11 @@ class Form_Mapping {
 		add_action( 'cmb2_init', [ $this, 'add_fields' ] );
 		add_filter( 'enter_title_here', [ $this, 'filter_enter_title_here' ], 10, 2 );
 		// Add dynamic fields during normal view.
-		add_action( 'cmb2_init_hookup_p4_form_mapping_metabox', [ $this, 'add_fields_dynamically_to_box' ] );
+		add_action( 'cmb2_init_hookup_' . P4FB_MAPPING_KEY_PREFIX . 'metabox', [ $this, 'add_fields_dynamically_to_box' ] );
 		// Add dynamic fields during save process.
-		add_action( 'cmb2_post_process_fields_p4_form_mapping_metabox', [ $this, 'add_fields_dynamically_to_box' ] );
+		add_action( 'cmb2_post_process_fields_' . P4FB_MAPPING_KEY_PREFIX . 'metabox', [ $this, 'add_fields_dynamically_to_box' ] );
+		// Save this mapping to the selected form
+		add_action( 'cmb2_save_post_fields_' . P4FB_MAPPING_KEY_PREFIX . 'form_metabox', [ $this, 'add_mapping_to_form' ], 10, 3 );
 
 	}
 
@@ -125,37 +127,32 @@ class Form_Mapping {
 	 */
 	public function add_fields() {
 		// Fields meta box
-		$prefix = 'p4_form_mapping_';
-
 		$cmb_mapping_mb = new_cmb2_box( [
-			'id'           => $prefix . 'form_metabox',
+			'id'           => P4FB_MAPPING_KEY_PREFIX . 'form_metabox',
 			'title'        => esc_html__( 'Mapping details', 'planet4-form-builder' ),
 			'object_types' => [ P4FB_MAPPING_CPT ],
 		] );
 
 		$cmb_mapping_mb->add_field( [
-			'id'          => $prefix . 'description',
+			'id'          => P4FB_MAPPING_KEY_PREFIX . 'description',
 			'name'        => esc_html__( 'Description', 'planet4-form-builder' ),
 			'description' => esc_html__( 'Write a short description for this mapping', 'planet4-form-builder' ),
 			'type'        => 'textarea_small',
 		] );
 
-		$cmb_mapping_mb->add_field(
-			[
-				'id'          => $prefix . 'form_id',
-				'name'        => esc_html__( 'Form ', 'planet4-form-builder' ),
-				'description' => esc_html__( 'Which CMS form does this mapping apply to?', 'planet4-form-builder' ),
-				'type'        => 'select',
-				'options'     => $this->get_crm_form_options(),
-			]
-		);
-
+		$cmb_mapping_mb->add_field( [
+			'id'          => P4FB_MAPPING_KEY_PREFIX . 'form_id',
+			'name'        => esc_html__( 'Form ', 'planet4-form-builder' ),
+			'description' => esc_html__( 'Which CMS form does this mapping apply to?', 'planet4-form-builder' ),
+			'type'        => 'select',
+			'options'     => $this->get_crm_form_options(),
+		] );
 
 		/**
 		 * Field Mappings
 		 */
 		$cmb_fields_mb = new_cmb2_box( [
-			'id'           => $prefix . 'metabox',
+			'id'           => P4FB_MAPPING_KEY_PREFIX . 'metabox',
 			'title'        => esc_html__( 'Field Mapping', 'planet4-form-builder' ),
 			'object_types' => [ P4FB_MAPPING_CPT ],
 		] );
@@ -176,7 +173,7 @@ class Form_Mapping {
 	function add_fields_dynamically_to_box( $cmb ) {
 		if ( $cmb->object_id() ) {
 			// Loop through however many fields are in the associated form
-			$form_id = get_post_meta( $cmb->object_id(), 'p4_form_mapping_form_id', true );
+			$form_id = get_post_meta( $cmb->object_id(), P4FB_MAPPING_KEY_PREFIX . 'form_id', true );
 			if ( ! $form_id ) {
 				return;
 			}
@@ -208,6 +205,29 @@ class Form_Mapping {
 		$forms    = array_map( 'esc_html', $forms );
 
 		return apply_filters( 'p4fb_get_form_list_options', $forms );
+	}
+
+	/**
+	 * Add the Mapping id to the Form
+	 *
+	 * @param int    $object_id   The ID of the current object
+	 * @param string $updated     Array of field ids that were updated.
+	 *                            Will only include field ids that had values change.
+	 * @param \CMB2  $cmb         This CMB2 object
+	 */
+	public function add_mapping_to_form( int $object_id, array $updated, \CMB2 $cmb ) {
+		//error_log( "object_id=" . $object_id );
+		//error_log( "updated=" . var_export( $updated, true ) );
+
+		// Check whether the form_id is set/changed
+		if ( in_array( P4FB_MAPPING_KEY_PREFIX . 'form_id', $updated, true ) ) {
+			$form_id = get_post_meta( $object_id, P4FB_MAPPING_KEY_PREFIX . 'form_id', true );
+			if ( $form_id ) {
+				if ( false === add_post_meta( $form_id, P4FB_KEY_PREFIX . 'mapping_id', $object_id, true ) ) {
+					add_post_meta( $form_id, P4FB_KEY_PREFIX . 'mapping_id', $object_id );
+				}
+			}
+		}
 	}
 
 }
