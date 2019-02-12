@@ -6,9 +6,13 @@
 	<h2>{{ post.title }}</h2>
 	<ul class="form-fields">
 		{% for field in post.p4_form_fields %}
-			<li>
+			{% if field.type == 'hidden' %}
 				{% include [ 'partials/field-'~field.type~'.twig' ] %}
-			</li>
+			{% else %}
+				<li>
+					{% include [ 'partials/field-'~field.type~'.twig' ] %}
+				</li>
+			{% endif %}
 		{% endfor %}
 		<li>
 			{% include [ 'partials/submit.twig' ] %}
