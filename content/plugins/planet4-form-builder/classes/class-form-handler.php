@@ -113,6 +113,8 @@ class Form_Handler {
 
 			/**
 			 * Post process the form entry. Likely send to a CRM or queue it to be sent.
+			 * Use a generic hook for all form types on 'p4fb_post_save_form' or
+			 * a form type(CRM)-specific hook on "p4fb_post_save_form_{$form_type}".
 			 *
 			 * @param WP_Post $form      The CRM form.
 			 * @param array   $form_data The form submission data.
@@ -120,8 +122,8 @@ class Form_Handler {
 			 *
 			 */
 			if ( isset( $errors['id'] ) ) {
-				do_action( 'p4fb_post_save_form', $form, $form_data, $errors['id'] );
 				do_action( "p4fb_post_save_form_{$form_type}", $form, $form_data, $errors['id'] );
+				do_action( 'p4fb_post_save_form', $form, $form_data, $errors['id'] );
 			}
 		} else {
 			// Handle errors (likely redisplay the same page)
