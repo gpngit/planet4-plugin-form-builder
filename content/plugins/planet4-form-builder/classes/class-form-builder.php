@@ -58,6 +58,7 @@ class Form_Builder {
 		add_filter( 'p4fb_sanitize_field_checkbox', [ $this, 'sanitize_field_checkbox' ], 10, 3 );
 		add_filter( 'p4fb_sanitize_field_checkbox-group', [ $this, 'sanitize_field_checkbox_group' ], 10, 3 );
 		add_filter( 'p4fb_sanitize_field_radio-group', [ $this, 'sanitize_field_radio_group' ], 10, 3 );
+		add_filter( 'p4fb_sanitize_field_hidden', [ $this, 'sanitize_field_text' ], 10, 3 );
 
 		/* Default validation */
 		add_filter( 'p4fb_validate_field_text', [ $this, 'validate_field_text' ], 10, 4 );
@@ -66,6 +67,7 @@ class Form_Builder {
 		add_filter( 'p4fb_validate_field_checkbox', [ $this, 'validate_field_checkbox' ], 10, 4 );
 		add_filter( 'p4fb_validate_field_checkbox-group', [ $this, 'validate_field_checkbox_group' ], 10, 4 );
 		add_filter( 'p4fb_validate_field_radio-group', [ $this, 'validate_field_radio_group' ], 10, 4 );
+		add_filter( 'p4fb_validate_field_hidden', [ $this, 'validate_field_text' ], 10, 4 );
 
 
 		Timber::$locations = [ P4FB_PLUGIN_DIR . '/templates/views' ];
@@ -272,6 +274,7 @@ class Form_Builder {
 				'checkbox'       => __( 'Checkbox', 'planet4-form-builder' ),
 				'checkbox-group' => __( 'Checkbox group', 'planet4-form-builder' ),
 				'radio-group'    => __( 'Radio button group', 'planet4-form-builder' ),
+				'hidden'         => __( 'Hidden value', 'planet4-form-builder' ),
 			],
 		] );
 
@@ -570,6 +573,5 @@ class Form_Builder {
 
 		return $new_options;
 	}
-
 
 }
