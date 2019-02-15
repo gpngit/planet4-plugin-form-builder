@@ -78,28 +78,6 @@ class Form_Shortcode {
 	 *
 	 */
 	function register_shortcode_ui() {
-		/*
-		 * Define the UI for attributes of the shortcode. Optional.
-		 *
-		 * In this demo example, we register multiple fields related to showing a quotation
-		 * - Select Page.
-		 *
-		 * If no UI is registered for an attribute, then the attribute will
-		 * not be editable through Shortcake's UI. However, the value of any
-		 * unregistered attributes will be preserved when editing.
-		 *
-		 * Each array must include 'attr', 'type', and 'label'.
-		 * * 'attr' should be the name of the attribute.
-		 * * 'type' options include: text, checkbox, textarea, radio, select, email,
-		 *     url, number, and date, post_select.
-		 * * 'label' is the label text associated with that input field.
-		 *
-		 * Use 'meta' to add arbitrary attributes to the HTML of the field.
-		 *
-		 * Use 'encode' to encode attribute data. Requires customization in shortcode callback to decode.
-		 *
-		 * Depending on 'type', additional arguments may be available.
-		 */
 		$fields = [
 			[
 				'label'    => esc_html__( 'Select Form', 'planet4-form-builder' ),
@@ -116,7 +94,7 @@ class Form_Shortcode {
 		$shortcode_ui_args = [
 			'label'         => esc_html__( 'Planet 4 Form', 'planet4-form-builder' ),
 			'listItemImage' => 'dashicons-feedback',
-			'post_type'     => [ 'post' ],
+			'post_type'     => [ 'post', 'page' ],
 			'attrs'         => $fields,
 		];
 
@@ -147,7 +125,7 @@ class Form_Shortcode {
 		<section class="pullquote" style="padding: 20px; background: rgba(0, 0, 0, 0.1);">
 			<p style="margin:0; padding: 0;">
 
-				<?php if ( ! empty( $attr['form'] ) ) : ?>
+				<?php if ( ! empty( $attr['form'] ) && is_admin() ) : ?>
 					<strong><?php esc_html_e( 'Form:', 'planet4-form-builder' ); ?></strong> <?php echo esc_html( $form_title ); ?><br>
 				<?php endif; ?>
 				<?php
