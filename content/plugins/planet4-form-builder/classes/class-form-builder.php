@@ -24,7 +24,7 @@ class Form_Builder {
 	 *
 	 * @var  Form_Template_Loader
 	 */
-	protected static $template_loader;
+	static $template_loader;
 
 
 	/**

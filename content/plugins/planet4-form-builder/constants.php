@@ -11,6 +11,11 @@ namespace P4FB\Form_Builder;
 define( 'P4FB_FORM_CPT', 'p4-form' );
 
 /**
+ * Shortcode name
+ */
+define( 'P4FB_FORM_SHORTCODE', 'p4-form' );
+
+/**
  * The prefix for form metakey names etc.
  */
 define( 'P4FB_KEY_PREFIX', 'p4_form_' );

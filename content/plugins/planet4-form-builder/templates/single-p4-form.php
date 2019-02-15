@@ -8,8 +8,11 @@ namespace P4FB\Form_Builder\Templates;
 use Timber\Post;
 use Timber\Timber;
 
-$context                     = Timber::get_context();
-$context['post']             = new Post();
+$context = Timber::get_context();
+// If called from the shortcode, the post is already set
+if ( empty( $context['post'] ) ) {
+	$context['post'] = new Post();
+}
 $context['form_submit_url']  = admin_url( 'admin-post.php' );
 $context['action']           = P4FB_FORM_ACTION;
 $context['nonce_action']     = P4FB_FORM_ACTION . '-' . $context['post']->ID;
@@ -38,6 +41,7 @@ foreach ( $context['post']->p4_form_fields as $index => $field ) {
 }
 
 //@TODO Derive/set $context['current_value']??
+// have multi checkbox as array of selected values ?(even if only one)
 
 Timber::render(
 	[
