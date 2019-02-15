@@ -12,6 +12,7 @@ if ( defined( 'WP_INSTALLING' ) && WP_INSTALLING ) {
 
 $hm_mu_plugins = [
 	'cmb2/init.php',
+	'shortcake/shortcode-ui.php',
 ];
 
 foreach ( $hm_mu_plugins as $file ) {

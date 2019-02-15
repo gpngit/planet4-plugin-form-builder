@@ -13,6 +13,7 @@
 	<exclude-pattern>content/hm-platform/*</exclude-pattern>
 	<exclude-pattern>content/plugins-mu/autoloader.php</exclude-pattern>
 	<exclude-pattern>content/plugins-mu/cmb2/*</exclude-pattern>
+	<exclude-pattern>content/plugins-mu/shortcake/*</exclude-pattern>
 	<exclude-pattern>content/plugins/query-monitor/*</exclude-pattern>
 	<exclude-pattern>content/plugins/wp-crontrol/*</exclude-pattern>
 	<exclude-pattern>content/themes/twentyseventeen/*</exclude-pattern>
