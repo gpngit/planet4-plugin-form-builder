@@ -216,16 +216,11 @@ class Form_Mapping {
 	 * @param \CMB2  $cmb         This CMB2 object
 	 */
 	public function add_mapping_to_form( int $object_id, array $updated, \CMB2 $cmb ) {
-		//error_log( "object_id=" . $object_id );
-		//error_log( "updated=" . var_export( $updated, true ) );
-
 		// Check whether the form_id is set/changed
-		if ( in_array( P4FB_MAPPING_KEY_PREFIX . 'form_id', $updated, true ) ) {
-			$form_id = get_post_meta( $object_id, P4FB_MAPPING_KEY_PREFIX . 'form_id', true );
-			if ( $form_id ) {
-				if ( false === add_post_meta( $form_id, P4FB_KEY_PREFIX . 'mapping_id', $object_id, true ) ) {
-					add_post_meta( $form_id, P4FB_KEY_PREFIX . 'mapping_id', $object_id );
-				}
+		$form_id = get_post_meta( $object_id, P4FB_MAPPING_KEY_PREFIX . 'form_id', true );
+		if ( $form_id ) {
+			if ( false === add_post_meta( $form_id, P4FB_KEY_PREFIX . 'mapping_id', $object_id, true ) ) {
+				add_post_meta( $form_id, P4FB_KEY_PREFIX . 'mapping_id', $object_id );
 			}
 		}
 	}
