@@ -104,7 +104,7 @@ class Form_Mapping {
 			'hierarchical'        => false,
 			'public'              => false,
 			'show_ui'             => true,
-			'show_in_menu'        => true,
+			'show_in_menu'        => 'edit.php?post_type=' . P4FB_FORM_CPT,
 			'menu_position'       => 160,
 			'menu_icon'           => 'dashicons-feedback',
 			'show_in_admin_bar'   => false,
