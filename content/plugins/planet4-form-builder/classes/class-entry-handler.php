@@ -46,43 +46,20 @@ class Entry_Handler {
 	function load() {
 		add_action( 'p4fb_post_save_form', [ $this, 'entry_handler' ], 10, 3 );
 		add_action( P4FB_KEY_PREFIX . 'queued_entry', [ $this, 'send_entry' ] );
-
 	}
 
 	/**
 	 * Post process the form entry. Queue ready to send to a CRM.
 	 * Calleds from the generic hook for all form types on 'p4fb_post_save_form'
 	 *
-	 * @param WP_Post $form      The CRM form.
-	 * @param array   $form_data The form submission data.
-	 * @param int     $entry     The entry reference.
+	 * @param \WP_Post $form      The CRM form.
+	 * @param array    $form_data The form submission data.
+	 * @param int      $entry_id  The entry reference.
 	 */
 	public function entry_handler( \WP_Post $form, array $form_data, int $entry_id ) {
-		//zed1_debug( __FILE__ . ':' . __LINE__ ); phpcs:ignore Squiz.PHP.CommentedOutCode.Found
-		//zed1_debug( 'form=', $form ); phpcs:ignore Squiz.PHP.CommentedOutCode.Found
-		//zed1_debug( 'form data=', $form_data ); phpcs:ignore Squiz.PHP.CommentedOutCode.Found
-		//zed1_debug( 'entry_id=', $entry_id ); phpcs:ignore Squiz.PHP.CommentedOutCode.Found
-		$mapped_data = [];
-		$entry       = get_post( $entry_id );
-		//zed1_debug( 'entry=', $entry ); phpcs:ignore Squiz.PHP.CommentedOutCode.Found
-		$mapping_id = get_post_meta( $form->ID, P4FB_KEY_PREFIX . 'mapping_id', true );
-		//zed1_debug( 'mapping id=', $mapping_id ); phpcs:ignore Squiz.PHP.CommentedOutCode.Found
-		if ( $mapping_id ) {
-			$fields = get_post_meta( $form->ID, P4FB_KEY_PREFIX . 'fields', true );
-			//zed1_debug( 'fields =', $fields ); phpcs:ignore Squiz.PHP.CommentedOutCode.Found
-			foreach ( $fields as $field ) {
-				//zed1_debug( 'mapped data=', $mapped_data ); phpcs:ignore Squiz.PHP.CommentedOutCode.Found
-				$mapped_field = get_post_meta( $mapping_id, 'form_field_' . $field['name'], true );
-				//zed1_debug( 'mapped field', $mapped_field ); phpcs:ignore Squiz.PHP.CommentedOutCode.Found
-				if ( $mapped_field ) {
-					//zed1_debug( 'data =', $form_data[ $field['name'] ] ); phpcs:ignore Squiz.PHP.CommentedOutCode.Found
-					$mapped_data[ $mapped_field ] = $form_data[ $field['name'] ];
-				}
-			}
-			//zed1_debug( 'mapped data=', $mapped_data ); phpcs:ignore Squiz.PHP.CommentedOutCode.Found
-		}
-
-		$form_type = get_post_meta( $form->ID, P4FB_KEY_PREFIX . 'form_type', true );
+		$mapping_id  = get_post_meta( $form->ID, P4FB_KEY_PREFIX . 'mapping_id', true );
+		$mapped_data = $this->get_mapped_data( $entry_id );
+		$form_type   = get_post_meta( $form->ID, P4FB_KEY_PREFIX . 'form_type', true );
 
 		// Send all the mapped data
 		$data = [
@@ -98,15 +75,56 @@ class Entry_Handler {
 	}
 
 	/**
+	 * Combine the form entry data according to the mapping to produce the data to be sent.
+	 *
+	 * @param int $entry_id The post id of the entry
+	 *
+	 * @return array The mapped data
+	 */
+	protected function get_mapped_data( int $entry_id ) : array {
+		$mapped_data = [];
+		$form_id     = get_post_meta( $entry_id, P4FB_KEY_PREFIX . 'form_id', true );
+		$mapping_id  = get_post_meta( $form_id, P4FB_KEY_PREFIX . 'mapping_id', true );
+		$entry       = get_post( $entry_id );
+		$form_data   = json_decode( $entry->post_content, true );
+		if ( $mapping_id ) {
+			$fields = get_post_meta( $form_id, P4FB_KEY_PREFIX . 'fields', true );
+			foreach ( $fields as $field ) {
+				$mapped_field = get_post_meta( $mapping_id, 'form_field_' . $field['name'], true );
+				if ( $mapped_field ) {
+					$mapped_data[ $mapped_field ] = $form_data[ $field['name'] ];
+				}
+			}
+		}
+
+		return $mapped_data;
+	}
+
+	/**
 	 * Schedule the form entry data to be sent to the CRM.
 	 *
 	 * @param array $data The data to send.
 	 */
 	public function schedule_send_entry( array $data ) {
+		// we need a minimum of the entry id in the data
+		if ( ! isset( $data['entry_id'] ) ) {
+			// not enough data to schedule
+
+			return;
+		}
+
+		// do we need to load the data ourselves (.e.g. from re-queue)?
+		if ( ! isset( $data['form_type'] ) ) {
+			$data['form_type']   = get_post_meta( $data['entry_id'], P4FB_KEY_PREFIX . 'form_type', true );
+			$data['form_id']     = get_post_meta( $data['entry_id'], P4FB_KEY_PREFIX . 'form_id', true );
+			$data['mapping_id']  = get_post_meta( $data['form_id'], P4FB_KEY_PREFIX . 'mapping_id', true );
+			$data['mapped_data'] = $this->get_mapped_data( $data['entry_id'] );
+		}
+
 		// Don't bother scheduling if we are not configured.
 		$configured = apply_filters( P4FB_KEY_PREFIX . 'crm_is_configured_' . $data['form_type'], false );
 		if ( ! $configured ) {
-			//zed1_debug( 'not configured' ); //phpcs:ignore Squiz.PHP.CommentedOutCode.Found
+			// Not configured. How to alert this??
 
 			return;
 		}
@@ -117,6 +135,9 @@ class Entry_Handler {
 			P4FB_KEY_PREFIX . 'queued_entry',
 			[ $data ]
 		);
+		if ( add_post_meta( $data['entry_id'], P4FB_ENTRY_STATUS_META_KEY, P4FB_ENTRY_STATUS_QUEUED, true ) === false ) {
+			update_post_meta( $data['entry_id'], P4FB_ENTRY_STATUS_META_KEY, P4FB_ENTRY_STATUS_QUEUED );
+		}
 	}
 
 	/**
@@ -131,48 +152,60 @@ class Entry_Handler {
 		$general_hook  = P4FB_KEY_PREFIX . 'send_entry';
 		$specific_hook = $general_hook . '_' . $form_type;
 		$response      = [];
-
 		// Do the send via a do_action hook. This allows plugins to handle specific form types (CRMs) differently.
 		if ( has_action( $specific_hook ) ) {
-
+			if ( add_post_meta( $args['entry_id'], P4FB_ENTRY_STATUS_META_KEY, P4FB_ENTRY_STATUS_PROCESS, true ) === false ) {
+				update_post_meta( $args['entry_id'], P4FB_ENTRY_STATUS_META_KEY, P4FB_ENTRY_STATUS_PROCESS );
+			}
 			do_action_ref_array( $specific_hook, [ $args, &$response ] );
 		} elseif ( has_action( $general_hook ) ) {
+			if ( add_post_meta( $args['entry_id'], P4FB_ENTRY_STATUS_META_KEY, P4FB_ENTRY_STATUS_PROCESS, true ) === false ) {
+				update_post_meta( $args['entry_id'], P4FB_ENTRY_STATUS_META_KEY, P4FB_ENTRY_STATUS_PROCESS );
+			}
 			do_action_ref_array( $general_hook, [ $args, &$response ] );
+		} else {
+			if ( add_post_meta( $args['entry_id'], P4FB_ENTRY_STATUS_META_KEY, P4FB_ENTRY_STATUS_ERROR, true ) === false ) {
+				update_post_meta( $args['entry_id'], P4FB_ENTRY_STATUS_META_KEY, P4FB_ENTRY_STATUS_ERROR );
+			}
+
+			return;
 		}
 
-		//zed1_debug( 'Response from scheduled send is', $response ); phpcs:ignore Squiz.PHP.CommentedOutCode.Found
 		$transmission_success = false;
 
 		if ( ! empty( $response ) && ! is_wp_error( $response ) ) {
 			$response_code = $response['code'];
 			if ( $response_code === 'success' ) {
-				//zed1_debug( 'sent successfully. code=', $response_code ); phpcs:ignore Squiz.PHP.CommentedOutCode.Found
 				$transmission_success = true;
 			}
 		}
 
+		if ( add_post_meta( $args['entry_id'], P4FB_ENTRY_RESPONSE_META_KEY, $response['response'], true ) === false ) {
+			update_post_meta( $args['entry_id'], P4FB_ENTRY_RESPONSE_META_KEY, $response['response'] );
+		}
+
 		if ( ! $transmission_success ) {
-			//zed1_debug( 'Send failure' ); phpcs:ignore Squiz.PHP.CommentedOutCode.Found
 			$retry_count = $args['retry_count'] ?? 0;
 
 			if ( $retry_count <= $retries ) {
 				$args['retry_count'] = ++ $retry_count;
 				$this->schedule_send_entry( $args );
-
-				$notification_post_id = $args['entry_id'];
-				$notification_type    = 'warning';
 			} else {
 
 				// We have run out of retries or irrecoverable error. Log error. Notify.
-				$notification_post_id = $args['entry_id'];
-				$notification_type    = 'error';
+				if ( add_post_meta( $args['entry_id'], P4FB_ENTRY_STATUS_META_KEY, P4FB_ENTRY_STATUS_ERROR, true ) === false ) {
+					update_post_meta( $args['entry_id'], P4FB_ENTRY_STATUS_META_KEY, P4FB_ENTRY_STATUS_ERROR );
+				}
 			}
 		} else {
 
 			// Everything went fine!
-			$notification_post_id = $args['entry_id'];
-			$notification_type    = 'success';
-		}
+			if ( add_post_meta( $args['entry_id'], P4FB_ENTRY_STATUS_META_KEY, P4FB_ENTRY_STATUS_SENT, true ) === false ) {
+				update_post_meta( $args['entry_id'], P4FB_ENTRY_STATUS_META_KEY, P4FB_ENTRY_STATUS_SENT );
+			}
+			// and delete it??
+			wp_trash_post( $args['entry_id'] );
 
+		}
 	}
 }

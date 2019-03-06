@@ -48,6 +48,7 @@ class Entry_Handler_BSD {
 		$base_url = $options['base_url'] ?? '';
 		$source   = $options['source'] ?? '';
 		if ( empty( $base_url ) || empty( $source ) ) {
+
 			return false;
 		}
 
@@ -57,8 +58,8 @@ class Entry_Handler_BSD {
 	/**
 	 * Send the form entry details to the API endpoint.
 	 *
-	 * @param array $data     The id of the entry, mapped fields, and other supporting data.
-	 * @param array $response Fill in the response details.
+	 * @param array $data            The id of the entry, mapped fields, and other supporting data.
+	 * @param array $passed_response Fill in the response details.
 	 */
 	public function send_entry( array $data, array &$passed_response ) {
 		if ( empty( $passed_response ) ) {
@@ -82,64 +83,38 @@ class Entry_Handler_BSD {
 		}
 		$url = add_query_arg( $args, $base_url );
 
-		// if it's a get request
-		$try_get = false;
-		if ( $try_get ) {
-			$url = add_query_arg( $data['mapped_data'], $url );
-			$response = wp_remote_get(
-				esc_url_raw( $url ),
-				[
-					'timeout'     => 45,
-					'redirection' => 1,
-					'httpversion' => '1.0',
-					'blocking'    => true,
-					'headers'     => [
-						'x-sender' => 'planet4-form-builder',
-					],
-				]
-			);
-		} else {
-			// try post
-
-			// if it's a post request
-			$response = wp_remote_post(
-				esc_url_raw( $url ),
-				[
-					'body'        => wp_json_encode( $data, JSON_UNESCAPED_SLASHES ),
-					'method'      => 'POST',
-					'timeout'     => 45,
-					'redirection' => 1,
-					'httpversion' => '1.0',
-					'blocking'    => true,
-					'headers'     => [
-						'Content-Type' => 'application/json',
-						'x-sender'     => 'planet4-form-builder',
-					],
-				]
-			);
-
-		}
+		$response = wp_remote_post(
+			esc_url_raw( $url ),
+			[
+				'body'        => $data['mapped_data'],
+				'method'      => 'POST',
+				'timeout'     => 45,
+				'redirection' => 1,
+				'httpversion' => '1.1',
+				'blocking'    => true,
+				'headers'     => [
+					'x-sender'     => 'planet4-form-builder',
+					'Content-Type' => 'application/x-www-form-urlencoded',
+				],
+			]
+		);
 
 		$transmission_success = false;
-
 		if ( ! empty( $response ) && ! is_wp_error( $response ) ) {
 			$response_code = (int) wp_remote_retrieve_response_code( $response );
-			//zed1_debug( 'Sent. Response is ', $response ); phpcs:ignore Squiz.PHP.CommentedOutCode.Found
 			if ( $response_code < 400 ) {
 				$transmission_success = true;
 			}
+			$response_body = json_decode( wp_remote_retrieve_body( $response ), true );
 		}
 
 		if ( ! $transmission_success ) {
-			//zed1_debug( 'send failure' ); phpcs:ignore Squiz.PHP.CommentedOutCode.Found
-			$passed_response['code']  = $response_code;
-			$passed_response['error'] = $response;
+			$passed_response['code']     = $response_code;
+			$passed_response['response'] = $response_body;
 		} else {
-			//zed1_debug( 'send success' ); phpcs:ignore Squiz.PHP.CommentedOutCode.Found
-			$passed_response['code'] = 'success';
+			$passed_response['code']     = 'success';
+			$passed_response['response'] = $response_body;
 		}
-
-		//zed1_debug( 'passed response is now ', $passed_response ); phpcs:ignore Squiz.PHP.CommentedOutCode.Found
 
 		return;
 	}

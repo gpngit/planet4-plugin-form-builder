@@ -34,6 +34,12 @@ class Form_Entry {
 	function load() {
 		add_action( 'init', [ $this, 'register_post_type' ] );
 		add_action( 'p4fb_save_form_submission', [ $this, 'save_form_submission' ], 10, 3 );
+		if ( is_admin() ) {
+			add_filter( 'manage_' . P4FB_ENTRY_CPT . '_posts_columns', [ $this, 'manage_posts_columns' ], 10 );
+			add_action( 'manage_' . P4FB_ENTRY_CPT . '_posts_custom_column', [ $this, 'manage_posts_custom_column' ], 10, 2 );
+			add_filter( 'post_row_actions', [ $this, 'post_row_actions' ], 10, 2 );
+			add_action( 'post_action_requeue', [ $this, 'post_action_requeue_entry_handler' ] );
+		}
 	}
 
 	/**
@@ -109,20 +115,130 @@ class Form_Entry {
 	public function save_form_submission( array &$errors, WP_Post $form, array $form_data ) {
 		// Create entry post
 		$entry_id = wp_insert_post( [
-			'post_type' => P4FB_ENTRY_CPT,
-			// translators: %d is replaced with the current unix timestamp.
+			'post_type'    => P4FB_ENTRY_CPT,
+			// translators: %d is replaced with the current unix timestamp as a unique id.
 			'post_title'   => sprintf( __( 'form entry %d', 'planet4-form-builder' ), time() ),
 			'post_content' => wp_json_encode( $form_data ),
-			'post_status' => 'publish',
+			'post_status'  => 'publish',
 		] );
 
 		if ( ! is_wp_error( $entry_id ) ) {
-			add_post_meta( $entry_id, 'p4_form_id', $form->ID, true );
-			add_post_meta( $entry_id, 'p4_form_name', $form->post_title, true );
-			add_post_meta( $entry_id, 'p4_form_type', get_post_meta( $form->ID, 'p4_form_form_type', true ), true );
+			add_post_meta( $entry_id, P4FB_KEY_PREFIX . 'form_id', $form->ID, true );
+			add_post_meta( $entry_id, P4FB_KEY_PREFIX . 'form_name', $form->post_title, true );
+			add_post_meta( $entry_id, P4FB_KEY_PREFIX . 'form_type', get_post_meta( $form->ID, P4FB_KEY_PREFIX . 'form_type', true ), true );
 			$errors['id'] = $entry_id;
 		} else {
 			$errors['error'] = $entry_id;
 		}
 	}
+
+
+	/**
+	 * Add our extra post columns.
+	 *
+	 * @param array $columns The current set of columns.
+	 *
+	 * @return array The modified list.
+	 */
+	public function manage_posts_columns( array $columns ) : array {
+		$columns[ P4FB_ENTRY_STATUS_META_KEY ]   = __( 'Status', 'planet4-form-builder' );
+		$columns[ P4FB_ENTRY_RESPONSE_META_KEY ] = __( 'Response', 'planet4-form-builder' );
+
+		return $columns;
+	}
+
+	/**
+	 * Output the information for each of our columns.
+	 *
+	 * @param string $column_name The column to output.
+	 * @param int    $post_id     The post in question.
+	 */
+	public function manage_posts_custom_column( $column_name, $post_id ) {
+		$send_stati = [
+			P4FB_ENTRY_STATUS_QUEUED  => __( 'Queued', 'planet4-form-builder' ),
+			P4FB_ENTRY_STATUS_PROCESS => __( 'Processing', 'planet4-form-builder' ),
+			P4FB_ENTRY_STATUS_SENT    => __( 'Sent', 'planet4-form-builder' ),
+			P4FB_ENTRY_STATUS_ERROR   => __( 'Error', 'planet4-form-builder' ),
+		];
+
+		switch ( $column_name ) {
+			case P4FB_ENTRY_STATUS_META_KEY:
+				$send_status = get_post_meta( $post_id, P4FB_ENTRY_STATUS_META_KEY, true );
+				if ( in_array( $send_status, array_keys( $send_stati ), true ) ) {
+					echo $send_stati[ $send_status ];
+				} else {
+					echo __( 'Unknown', 'planet4-form-builder' );
+				}
+				break;
+			case P4FB_ENTRY_RESPONSE_META_KEY:
+				$response = get_post_meta( $post_id, P4FB_ENTRY_RESPONSE_META_KEY, true );
+				if ( ! empty( $response ) ) {
+					printf( '<span class="entry-response"><abbr title="%s">%s</abbr></span>',
+						esc_attr( var_export( $response, true ) ),
+						__( 'Hover mouse to see last response', 'planet4-form-builder' )
+					);
+				}
+				break;
+		}
+	}
+
+	/**
+	 * Add our specific action item to the hover menu.
+	 *
+	 * @param array    $actions The current array of actions.
+	 * @param \WP_Post $post    The current post.
+	 *
+	 * @return array The modified list.
+	 */
+	public function post_row_actions( array $actions, \WP_Post $post ) : array {
+		if ( P4FB_ENTRY_CPT !== $post->post_type ) {
+			return $actions;
+		}
+
+		if ( ! current_user_can( 'edit_post', $post->ID ) ) {
+			return $actions;
+		}
+
+		$post_type_object = get_post_type_object( $post->post_type );
+		if ( ! $post_type_object ) {
+			return $actions;
+		}
+
+		// Add re-queue action if errored.
+		$status = get_post_meta( $post->ID, P4FB_ENTRY_STATUS_META_KEY, true );
+		if ( P4FB_ENTRY_STATUS_ERROR === $status ) {
+			$action             = 'requeue';
+			$link               = add_query_arg( 'action', $action, admin_url( sprintf( $post_type_object->_edit_link, $post->ID ) ) );
+			$link               = wp_nonce_url( $link, "$action-post_{$post->ID}" );
+			$actions['requeue'] = sprintf(
+				'<a href="%s" class="" aria-label="%s">%s</a>',
+				$link,
+				esc_attr( __( 'Re-queue entry', 'planet4-form-builder' ) ),
+				_x( 'Re-queue', 'verb', 'planet4-form-builder' )
+			);
+		}
+
+		return $actions;
+	}
+
+	/**
+	 * Handle the requeue action from the post_edit screen.
+	 *
+	 * @param int $post_id The entry to requeue.
+	 */
+	public function post_action_requeue_entry_handler( int $post_id ) {
+		global $post_type;
+		// check everything is legit...
+		check_admin_referer( "requeue-post_{$post_id}" );
+		Entry_Handler::get_instance()->schedule_send_entry( [ 'entry_id' => $post_id ] );
+		$sendback = admin_url( 'edit.php' );
+		$sendback = add_query_arg( 'post_type', $post_type, $sendback );
+		$sendback = add_query_arg( [
+			'enqueued' => 1,
+			'ids'      => $post_id,
+		], $sendback );
+		wp_redirect( $sendback );
+		exit();
+	}
+
 }

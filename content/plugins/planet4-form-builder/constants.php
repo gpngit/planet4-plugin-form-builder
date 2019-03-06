@@ -36,6 +36,20 @@ define( 'P4FB_MAPPING_KEY_PREFIX', 'p4_form_mapping_' );
 define( 'P4FB_ENTRY_CPT', 'p4-form-entry' );
 
 /**
+ * The Entry CPT status.
+ */
+define( 'P4FB_ENTRY_STATUS_META_KEY', P4FB_KEY_PREFIX . 'entry_status' );
+define( 'P4FB_ENTRY_STATUS_QUEUED', 'queued' );
+define( 'P4FB_ENTRY_STATUS_PROCESS', 'processing' );
+define( 'P4FB_ENTRY_STATUS_SENT', 'sent' );
+define( 'P4FB_ENTRY_STATUS_ERROR', 'error' );
+
+/**
+ * The last response from the API
+ */
+define( 'P4FB_ENTRY_RESPONSE_META_KEY', P4FB_KEY_PREFIX . 'response' );
+
+/**
  * The plugins root directory.
  */
 define( 'P4FB_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
