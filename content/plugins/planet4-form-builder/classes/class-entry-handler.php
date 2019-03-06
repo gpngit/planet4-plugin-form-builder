@@ -124,8 +124,7 @@ class Entry_Handler {
 		// Don't bother scheduling if we are not configured.
 		$configured = apply_filters( P4FB_KEY_PREFIX . 'crm_is_configured_' . $data['form_type'], false );
 		if ( ! $configured ) {
-			// Not configured. How to alert this??
-
+			// @Todo: Not configured. How should this be alerted?
 			return;
 		}
 
@@ -147,6 +146,7 @@ class Entry_Handler {
 	 * @param array $args The id of the entry, mapped fields, and other supporting data.
 	 */
 	public function send_entry( array $args ) {
+		// @Todo: Should retries be handled?
 		$retries       = 0;
 		$form_type     = $args['form_type'];
 		$general_hook  = P4FB_KEY_PREFIX . 'send_entry';

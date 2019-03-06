@@ -73,7 +73,8 @@ class Entry_Handler_BSD {
 			return;
 		}
 
-		$options        = get_option( P4FB_SETTINGS_OPTION_NAME );
+		$options = get_option( P4FB_SETTINGS_OPTION_NAME );
+		// @Todo: Should retries be handled?
 		$retries        = (int) $options['api_retries'] ?? 0;
 		$base_url       = $options['base_url'] ?? '';
 		$source         = $options['source'] ?? '';

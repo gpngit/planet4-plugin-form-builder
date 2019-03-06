@@ -127,7 +127,7 @@ class Form_Handler {
 			}
 		} else {
 			// Handle errors (likely redisplay the same page)
-			//@TODO echo 'errors are ' . var_export( $errors, true );
+			// @Todo: echo 'errors are ' . var_export( $errors, true );
 		}
 
 	}

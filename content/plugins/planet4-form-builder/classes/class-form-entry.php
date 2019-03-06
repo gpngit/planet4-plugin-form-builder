@@ -174,7 +174,7 @@ class Form_Entry {
 				$response = get_post_meta( $post_id, P4FB_ENTRY_RESPONSE_META_KEY, true );
 				if ( ! empty( $response ) ) {
 					printf( '<span class="entry-response"><abbr title="%s">%s</abbr></span>',
-						esc_attr( var_export( $response, true ) ),
+						esc_attr( var_export( $response, true ) ), //phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_var_export
 						__( 'Hover mouse to see last response', 'planet4-form-builder' )
 					);
 				}
