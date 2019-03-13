@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Planet4 - Form Builder
- * Description: Simple form builder.
+ * Description: A simple form builder. The plugin handles form submissions and provides hooks to send them off to CRM or other external systems.
  * Plugin URI: http://github.com/greenpeace/
  * Version: 0.1.0
  * Php Version: 7.0
