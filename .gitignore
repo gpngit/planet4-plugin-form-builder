@@ -1,40 +1,24 @@
-.htaccess
-xmlrpc.php
-blogs.dir/
-upgrade/
-sitemap.xml
-sitemap.xml.gz
-uploads/
-wpremote
-*-backups
-/node_modules/
+vendor/*
+!vendor/composer
+!vendor/autoload.php
+yarn-error.log
+node_modules/
 
-### WordPress local dev ###
-wp-config-local.php
+# Translation backups #
+################
+/languages/*.po~
+/languages/*.pot~
+
+# Logs #
+########
 *.log
-hm-dev/
-ignore/
-content/db.php
-test-uploads/
-/chassis-p4
 
-### OS and Software generated files ###
+# OS generated files #
+######################
 .DS_Store
-ehthumbs.db
 Thumbs.db
-._*
-.idea/
-.vscode/
 
-# Composer
-/vendor
-/content/hm-platform
-/content/plugins-mu/cmb2
-/content/plugins-mu/shortcake
-/content/plugins/query-monitor
-/content/plugins/wp-crontrol
-/content/themes/twentyseventeen
-/wordpress
-
-# https://github.com/webpack-contrib/mini-css-extract-plugin/issues/151
-#/content/plugins-mu/dflds-cmb2/assets/css/dflds-cmb2
+# IDE generated files #
+#######################
+.idea
+reports
