@@ -16,7 +16,7 @@ namespace P4FB\Form_Builder;
 
 // Exit if accessed directly.
 defined( 'ABSPATH' ) or die( 'Direct access is forbidden!' );
-
+require_once __DIR__ . '/vendor/autoload.php';
 require_once __DIR__ . '/constants.php';
 require_once __DIR__ . '/classes/class-form-builder.php';
 require_once __DIR__ . '/classes/class-form-mapping.php';
@@ -25,10 +25,8 @@ require_once __DIR__ . '/classes/class-form-entry.php';
 require_once __DIR__ . '/classes/class-entry-handler.php';
 require_once __DIR__ . '/classes/class-entry-handler-bsd.php';
 require_once __DIR__ . '/classes/class-form-shortcode.php';
-if ( ! class_exists( 'Gamajo_Template_Loader' ) ) {
-	require plugin_dir_path( __FILE__ ) . 'class-gamajo-template-loader.php';
-}
 require_once __DIR__ . '/classes/class-form-template-loader.php';
+
 add_action( 'plugins_loaded', function () {
 	Form_Builder::get_instance()->load();
 	Form_Mapping::get_instance()->load();
