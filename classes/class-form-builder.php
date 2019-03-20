@@ -53,6 +53,7 @@ class Form_Builder {
 
 		/* Default sanitization */
 		add_filter( 'p4fb_sanitize_field_text', [ $this, 'sanitize_field_text' ], 10, 3 );
+		add_filter( 'p4fb_sanitize_field_email', [ $this, 'sanitize_field_email' ], 10, 3 );
 		add_filter( 'p4fb_sanitize_field_textarea', [ $this, 'sanitize_field_textarea' ], 10, 3 );
 		add_filter( 'p4fb_sanitize_field_select', [ $this, 'sanitize_field_select' ], 10, 3 );
 		add_filter( 'p4fb_sanitize_field_checkbox', [ $this, 'sanitize_field_checkbox' ], 10, 3 );
@@ -181,7 +182,7 @@ class Form_Builder {
 	 */
 	public function validate_form_type( $form_type ) {
 		$form_type = sanitize_text_field( $form_type );
-		if ( in_array( $form_type, array_keys( $this->get_crm_type_options() ), true ) ) {
+		if ( array_key_exists( $form_type, $this->get_crm_type_options() ) ) {
 			return $form_type;
 		}
 
@@ -266,6 +267,7 @@ class Form_Builder {
 			'show_option_none' => esc_attr__( 'Choose field type', 'planet4-form-builder' ),
 			'options'          => [
 				'text'           => __( 'Text field', 'planet4-form-builder' ),
+				'email'          => __( 'Email field', 'planet4-form-builder' ),
 				'textarea'       => __( 'Text area', 'planet4-form-builder' ),
 				'select'         => __( 'Dropdown select', 'planet4-form-builder' ),
 				'checkbox'       => __( 'Checkbox', 'planet4-form-builder' ),
@@ -356,6 +358,17 @@ class Form_Builder {
 	}
 
 	/**
+	 * Simple sanitization for email field.
+	 *
+	 * @param string $value The email address to sanitize.
+	 *
+	 * @return string
+	 */
+	public function sanitize_field_email( $value ) :string {
+		return sanitize_email( $value );
+	}
+
+	/**
 	 * Simple sanitization for textarea field.
 	 *
 	 * @param string|array $value The value from the form submission or empty string.
@@ -432,6 +445,22 @@ class Form_Builder {
 			return __( 'Required field missing.', 'planet4-form-builder' );
 		}
 
+		return false;
+	}
+
+	/**
+	 * Simple validation for email field.
+	 *
+	 * @param string|array $value The value from the form submission or empty string.
+	 * @param \WP_Post     $form  The CRM form.
+	 * @param array        $field The field definition.
+	 *
+	 * @return boolean|string False if no error. Error message if there is an error
+	 */
+	public function validate_field_email( $value, \WP_Post $form, array $field ) {
+		if ( ! empty( $field['required'] ) && empty( $value ) ) {
+			return __( 'Required field missing.', 'planet4-form-builder' );
+		}
 		return false;
 	}
 
