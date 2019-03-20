@@ -93,13 +93,12 @@ class Settings_Page_BSD {
 			$this->section_name
 		);
 
-
 	}
 
 	/**
 	 * Render the Base URL text field.
 	 */
-	function render_base_url_field() {
+	public function render_base_url_field() {
 
 		// Get current value.
 		$options       = get_option( $this->option_key );
@@ -114,7 +113,7 @@ class Settings_Page_BSD {
 	/**
 	 * Render the API secret text field.
 	 */
-	function render_source_field() {
+	public function render_source_field() {
 
 		// Get current value.
 		$options       = get_option( $this->option_key );
@@ -129,7 +128,7 @@ class Settings_Page_BSD {
 	/**
 	 * Render the API retries text field.
 	 */
-	function render_api_retries_field() {
+	public function render_api_retries_field() {
 
 		// Get current value.
 		$options       = get_option( $this->option_key );
@@ -149,7 +148,7 @@ class Settings_Page_BSD {
 	 *
 	 * @return array The sanitized input.
 	 */
-	function sanitize_callback( array $input ) : array {
+	public function sanitize_callback( array $input ) : array {
 		if ( isset( $input['base_url'] ) ) {
 			$input['base_url'] = wp_strip_all_tags( $input['base_url'] );
 		}

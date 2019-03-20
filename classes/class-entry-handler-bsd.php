@@ -3,17 +3,23 @@
  * BSD Form handler class.
  * This class hooks to the 'P4FB_KEY_PREFIX_send_entry_bsd' action and sends the form entry to the BSD CRM.
  *
+ * @package P4FB\Form_Builder
  */
 
 namespace P4FB\Form_Builder;
 
+/**
+ * Class Entry_Handler_BSD
+ *
+ * @package P4FB\Form_Builder
+ */
 class Entry_Handler_BSD {
 	/**
 	 *  Store the singleton instance
 	 *
 	 * @var  Entry_Handler_BSD
 	 */
-	static $instance;
+	private static $instance;
 
 	/**
 	 * Create singleton instance.
@@ -39,20 +45,14 @@ class Entry_Handler_BSD {
 	/**
 	 * Check whether we have our settings configured.
 	 *
-	 * @param bool $status The current status
-	 *
 	 * @return mixed Whether we have our set up or not.
 	 */
-	public function crm_is_configured( bool $status ) : bool {
+	public function crm_is_configured() : bool {
 		$options  = get_option( P4FB_SETTINGS_OPTION_NAME );
 		$base_url = $options['base_url'] ?? '';
 		$source   = $options['source'] ?? '';
-		if ( empty( $base_url ) || empty( $source ) ) {
 
-			return false;
-		}
-
-		return true;
+		return ! ( empty( $base_url ) || empty( $source ) );
 	}
 
 	/**
@@ -74,8 +74,6 @@ class Entry_Handler_BSD {
 		}
 
 		$options = get_option( P4FB_SETTINGS_OPTION_NAME );
-		// @Todo: Should retries be handled?
-		$retries        = (int) $options['api_retries'] ?? 0;
 		$base_url       = $options['base_url'] ?? '';
 		$source         = $options['source'] ?? '';
 		$args['source'] = $source;
@@ -116,7 +114,5 @@ class Entry_Handler_BSD {
 			$passed_response['code']     = 'success';
 			$passed_response['response'] = $response_body;
 		}
-
-		return;
 	}
 }

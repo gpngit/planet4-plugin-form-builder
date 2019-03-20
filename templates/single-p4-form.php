@@ -9,9 +9,10 @@ use Timber\Post;
 use Timber\Timber;
 
 $context = Timber::get_context();
-// If called from the shortcode, the post is already set
+$form_id = get_query_var('form_id');
+// If called from the shortcode, the post is already set.
 if ( empty( $context['post'] ) ) {
-	$context['post'] = new Post();
+	$context['post'] = new Post( $form_id );
 }
 $context['form_submit_url']  = admin_url( 'admin-post.php' );
 $context['action']           = P4FB_FORM_ACTION;
@@ -46,7 +47,7 @@ foreach ( $context['post']->p4_form_fields as $index => $field ) {
 Timber::render(
 	[
 		'single-' . $context['post']->post_type . '.twig',
-		'single.twig',
+		//'single.twig',
 	],
 	$context
 );

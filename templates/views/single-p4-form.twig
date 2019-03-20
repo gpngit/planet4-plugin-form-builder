@@ -1,21 +1,22 @@
-<form id="p4en_form" action="{{ form_submit_url }}" method="post" class="p4fb_form p4en_form">
+<form id="p4en_form" action="{{ form_submit_url }}" method="post">
 	{{ fn( 'wp_nonce_field', nonce_action, nonce_name, false, false )|raw }}
 	<input type="hidden" name="action" value="{{ action }}">
 	<input type="hidden" name="p4_form_id" value="{{ post.ID }}">
 	<input type="hidden" name="p4_form_type" value="{{ post.p4_form_form_type }}">
-	<h2>{{ post.title }}</h2>
-	<ul class="form-fields">
-		{% for field in post.p4_form_fields %}
-			{% if field.type == 'hidden' %}
-				{% include [ 'partials/field-'~field.type~'.twig' ] %}
-			{% else %}
-				<li>
-					{% include [ 'partials/field-'~field.type~'.twig' ] %}
-				</li>
-			{% endif %}
-		{% endfor %}
-		<li>
-			{% include [ 'partials/submit.twig' ] %}
-		</li>
-	</ul>
+	<div class="">
+		<div class="">
+			<div class="formblock-flex donations-formsection-info">
+				{% for field in post.p4_form_fields %}
+					{% if field.type == 'hidden' %}
+						{% include [ 'partials/field-'~field.type~'.twig' ] %}
+					{% else %}
+						{% include [ 'partials/field-'~field.type~'.twig' ] %}
+					{% endif %}
+				{% endfor %}
+				<div class="submit">
+					{% include [ 'partials/submit.twig' ] %}
+				</div>
+			</div>
+		</div>
+	</div>
 </form>

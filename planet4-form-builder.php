@@ -37,6 +37,10 @@ add_action( 'plugins_loaded', function () {
 	Form_Shortcode::get_instance()->load();
 } );
 
+add_action( 'wp_enqueue_scripts', function() {
+	wp_register_style( 'p4fb', plugin_dir_url( __FILE__ ) . 'style.css', [ 'bootstrap' ], '1.0', 'screen' );
+} );
+
 if ( is_admin() ) {
 	require_once __DIR__ . '/classes/class-form-builder-settings-page.php';
 	require_once __DIR__ . '/classes/class-settings-page-bsd.php';

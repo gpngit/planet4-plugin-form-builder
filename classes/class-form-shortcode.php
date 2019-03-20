@@ -7,6 +7,7 @@
 namespace P4FB\Form_Builder;
 
 use Timber\Post;
+use Timber\Timber;
 
 class Form_Shortcode {
 	/**
@@ -14,7 +15,7 @@ class Form_Shortcode {
 	 *
 	 * @var  Form_Shortcode
 	 */
-	static $instance;
+	private static $instance;
 
 	/**
 	 * Create singleton instance.
@@ -32,7 +33,7 @@ class Form_Shortcode {
 	/**
 	 * Set up our hooks.
 	 */
-	function load() {
+	public function load() {
 		add_action( 'init', [ $this, 'shortcode_ui_detection' ] ); // Check to see if Shortcake is running, show an admin notice if not.
 		add_action( 'init', [ $this, 'register_shortcode' ] ); // Register the shortcode.
 		add_action( 'register_shortcode_ui', [ $this, 'register_shortcode_ui' ] ); // Register the Shortcode UI setup for the shortcode.
@@ -42,7 +43,7 @@ class Form_Shortcode {
 	/**
 	 * If Shortcake isn't active, then add an administration notice.
 	 */
-	function shortcode_ui_detection() {
+	public function shortcode_ui_detection() {
 		if ( ! function_exists( 'shortcode_ui_register_for_shortcode' ) ) {
 			add_action( 'admin_notices', [ $this, 'admin_notice_need_shortcake' ] );
 		}
@@ -51,7 +52,7 @@ class Form_Shortcode {
 	/**
 	 * Display an administration notice if the user can activate plugins.
 	 */
-	function admin_notice_need_shortcake() {
+	public function admin_notice_need_shortcake() {
 		if ( current_user_can( 'activate_plugins' ) ) {
 			?>
 			<div class="error message">
@@ -68,16 +69,14 @@ class Form_Shortcode {
 	 * Shortcake is not active.
 	 *
 	 */
-	function register_shortcode() {
+	public function register_shortcode() {
 		add_shortcode( P4FB_FORM_SHORTCODE, [ $this, 'shortcode_ui_dev_shortcode' ] );
 	}
 
-
 	/**
 	 * Shortcode UI setup for the Planet4 Form shortcode.
-	 *
 	 */
-	function register_shortcode_ui() {
+	public function register_shortcode_ui() {
 		$fields = [
 			[
 				'label'    => esc_html__( 'Select Form', 'planet4-form-builder' ),
@@ -113,37 +112,35 @@ class Form_Shortcode {
 	 *
 	 * It renders the shortcode based on supplied attributes.
 	 */
-	function shortcode_ui_dev_shortcode( $attr, $content, $shortcode_tag ) {
+	public function shortcode_ui_dev_shortcode( $attr, $content, $shortcode_tag ) {
 
-		$attr       = shortcode_atts( [
-			'form' => '',
-		], $attr, $shortcode_tag );
+		$attr       = shortcode_atts( [ 'form' => '' ], $attr, $shortcode_tag );
 		$form_title = ! empty( $attr['form'] ) ? get_the_title( $attr['form'] ) : '';
 
+		wp_enqueue_style( 'p4fb' );
 		ob_start();
 		?>
-		<section class="pullquote" style="padding: 20px; background: rgba(0, 0, 0, 0.1);">
-			<p style="margin:0; padding: 0;">
-
-				<?php if ( ! empty( $attr['form'] ) && is_admin() ) : ?>
-					<strong><?php esc_html_e( 'Form:', 'planet4-form-builder' ); ?></strong> <?php echo esc_html( $form_title ); ?><br>
+		<div class="p4fb">
+			<h2>
+				<?php if ( ! empty( $attr['form'] ) ) : ?>
+					<?php echo esc_html( $form_title ); ?><br>
 				<?php endif; ?>
+			</h2>
+			<p>
 				<?php
-				add_filter( 'timber/context', function ( array $context ) use ( $attr ) : array {
-					if ( isset( $attr['form'] ) ) {
-						$context['post'] = new Post( $attr['form'] );
-					}
-
-					return $context;
-				} );
-				Form_Builder::$template_loader->get_template_part( 'single', P4FB_FORM_CPT, true );
+				$desc = get_post_meta( $attr['form'], 'p4_form_description', true );
+				if ( $desc ) {
+					echo esc_html( $desc );
+				}
 				?>
 			</p>
-		</section>
+			<?php
+			set_query_var( 'form_id', $attr['form'] );
+			Form_Builder::$template_loader->get_template_part( 'single', P4FB_FORM_CPT, true );
+			?>
+		</div>
 		<?php
 
 		return ob_get_clean();
 	}
-
-
 }

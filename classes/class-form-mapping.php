@@ -13,7 +13,7 @@ class Form_Mapping {
 	 *
 	 * @var  Form_Mapping
 	 */
-	static $instance;
+	private static $instance;
 
 	/**
 	 * Create singleton instance.
@@ -31,7 +31,7 @@ class Form_Mapping {
 	/**
 	 * Register CPT. Set up our hooks.
 	 */
-	function load() {
+	public function load() {
 		add_action( 'init', [ $this, 'register_post_type' ] );
 
 		add_action( 'cmb2_init', [ $this, 'add_fields' ] );
@@ -53,7 +53,7 @@ class Form_Mapping {
 	 *
 	 * @return string The updated string.
 	 */
-	function filter_enter_title_here( string $title, \WP_Post $post ) : string {
+	public function filter_enter_title_here( string $title, \WP_Post $post ) : string {
 		if ( P4FB_MAPPING_CPT === $post->post_type ) {
 			return __( 'Enter mapping name', 'planet4-form-builder' );
 		}
@@ -143,7 +143,7 @@ class Form_Mapping {
 		$cmb_mapping_mb->add_field( [
 			'id'          => P4FB_MAPPING_KEY_PREFIX . 'form_id',
 			'name'        => esc_html__( 'Form ', 'planet4-form-builder' ),
-			'description' => esc_html__( 'Which CMS form does this mapping apply to?', 'planet4-form-builder' ),
+			'description' => esc_html__( 'Which CRM form does this mapping apply to?', 'planet4-form-builder' ),
 			'type'        => 'select',
 			'options'     => $this->get_crm_form_options(),
 		] );
@@ -170,7 +170,7 @@ class Form_Mapping {
 	 *
 	 * @param $cmb The CMB2 object.
 	 */
-	function add_fields_dynamically_to_box( $cmb ) {
+	public function add_fields_dynamically_to_box( $cmb ) {
 		if ( $cmb->object_id() ) {
 			// Loop through however many fields are in the associated form
 			$form_id = get_post_meta( $cmb->object_id(), P4FB_MAPPING_KEY_PREFIX . 'form_id', true );
@@ -211,11 +211,8 @@ class Form_Mapping {
 	 * Add the Mapping id to the Form
 	 *
 	 * @param int    $object_id   The ID of the current object
-	 * @param string $updated     Array of field ids that were updated.
-	 *                            Will only include field ids that had values change.
-	 * @param \CMB2  $cmb         This CMB2 object
 	 */
-	public function add_mapping_to_form( int $object_id, array $updated, \CMB2 $cmb ) {
+	public function add_mapping_to_form( int $object_id ) {
 		// Check whether the form_id is set/changed
 		$form_id = get_post_meta( $object_id, P4FB_MAPPING_KEY_PREFIX . 'form_id', true );
 		if ( $form_id ) {

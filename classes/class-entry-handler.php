@@ -5,6 +5,7 @@
  * It responds to it's own enqueued jobs then triggers an action to allow a plugin CRM to do the communication part.
  * It will expect an success/error response from the CRM handler, and will deal with re-queueing on error, and deleting the entry on success.
  *
+ * @package P4FB\Form_Builder
  */
 
 namespace P4FB\Form_Builder;
@@ -19,13 +20,18 @@ if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
 	define( 'DEBUG_DELAY', 0 );
 }
 
+/**
+ * Class Entry_Handler
+ *
+ * @package P4FB\Form_Builder
+ */
 class Entry_Handler {
 	/**
 	 *  Store the singleton instance
 	 *
 	 * @var  Entry_Handler
 	 */
-	static $instance;
+	private static $instance;
 
 	/**
 	 * Create singleton instance.
@@ -43,7 +49,7 @@ class Entry_Handler {
 	/**
 	 * Set up our hooks.
 	 */
-	function load() {
+	public function load() {
 		add_action( 'p4fb_post_save_form', [ $this, 'entry_handler' ], 10, 3 );
 		add_action( P4FB_KEY_PREFIX . 'queued_entry', [ $this, 'send_entry' ] );
 	}
@@ -61,7 +67,7 @@ class Entry_Handler {
 		$mapped_data = $this->get_mapped_data( $entry_id );
 		$form_type   = get_post_meta( $form->ID, P4FB_KEY_PREFIX . 'form_type', true );
 
-		// Send all the mapped data
+		// Send all the mapped data.
 		$data = [
 			'form_type'   => $form_type,
 			'form_id'     => $form->ID,
@@ -106,10 +112,9 @@ class Entry_Handler {
 	 * @param array $data The data to send.
 	 */
 	public function schedule_send_entry( array $data ) {
-		// we need a minimum of the entry id in the data
+		// we need a minimum of the entry id in the data.
 		if ( ! isset( $data['entry_id'] ) ) {
-			// not enough data to schedule
-
+			// not enough data to schedule.
 			return;
 		}
 
