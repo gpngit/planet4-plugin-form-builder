@@ -264,7 +264,6 @@ class Form_Builder {
 			'id'               => 'type',
 			'name'             => esc_html__( 'Field type', 'planet4-form-builder' ),
 			'type'             => 'select',
-			'show_option_none' => esc_attr__( 'Choose field type', 'planet4-form-builder' ),
 			'options'          => [
 				'text'           => __( 'Text field', 'planet4-form-builder' ),
 				'email'          => __( 'Email field', 'planet4-form-builder' ),
