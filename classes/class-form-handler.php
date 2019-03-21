@@ -130,7 +130,8 @@ class Form_Handler {
 			// Handle errors (likely redisplay the same page)
 			// @Todo: echo 'errors are ' . var_export( $errors, true );
 		}
-
+		wp_safe_redirect( home_url() );
+		exit;
 	}
 
 }

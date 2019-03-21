@@ -3,10 +3,10 @@
 	<textarea
 			name="{{ field.name }}"
 			class="{{ field.class }}"
-			{{ 'on' == field.required ? 'required' : '' }} }}
+			{{ 'on' == field.required ? 'required' : '' }}
 			placeholder="{{ field.label }}"
 	>
-		{{ field.value | e('esc_html')
+		{{ field.value | e('esc_html') }}
 	</textarea>
 	</div>
 </div>

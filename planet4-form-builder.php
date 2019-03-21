@@ -24,26 +24,36 @@ require_once __DIR__ . '/classes/class-form-handler.php';
 require_once __DIR__ . '/classes/class-form-entry.php';
 require_once __DIR__ . '/classes/class-entry-handler.php';
 require_once __DIR__ . '/classes/class-entry-handler-bsd.php';
+require_once __DIR__ . '/classes/class-entry-handler-hubspot.php';
 require_once __DIR__ . '/classes/class-form-shortcode.php';
 require_once __DIR__ . '/classes/class-form-template-loader.php';
 
-add_action( 'plugins_loaded', function () {
-	Form_Builder::get_instance()->load();
-	Form_Mapping::get_instance()->load();
-	Form_Handler::get_instance()->load();
-	Form_Entry::get_instance()->load();
-	Entry_Handler::get_instance()->load();
-	Entry_Handler_BSD::get_instance()->load();
-	Form_Shortcode::get_instance()->load();
-} );
+add_action(
+	'plugins_loaded',
+	function () {
+		Form_Builder::get_instance()->load();
+		Form_Mapping::get_instance()->load();
+		Form_Handler::get_instance()->load();
+		Form_Entry::get_instance()->load();
+		Entry_Handler::get_instance()->load();
+		Entry_Handler_BSD::get_instance()->load();
+		Entry_Handler_Hubspot::get_instance()->load();
+		Form_Shortcode::get_instance()->load();
+	}
+);
 
-add_action( 'wp_enqueue_scripts', function() {
-	wp_register_style( 'p4fb', plugin_dir_url( __FILE__ ) . 'style.css', [ 'bootstrap' ], '1.0', 'screen' );
-} );
+add_action(
+	'wp_enqueue_scripts',
+	function () {
+		wp_register_style( 'p4fb', plugin_dir_url( __FILE__ ) . 'style.css', [ 'bootstrap' ], '1.0', 'screen' );
+	}
+);
 
 if ( is_admin() ) {
 	require_once __DIR__ . '/classes/class-form-builder-settings-page.php';
 	require_once __DIR__ . '/classes/class-settings-page-bsd.php';
+	require_once __DIR__ . '/classes/class-settings-page-hubspot.php';
 	Form_Builder_Settings_Page::get_instance();
 	Settings_Page_BSD::get_instance();
+	Settings_Page_Hubspot::get_instance();
 }

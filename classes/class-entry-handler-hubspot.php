@@ -1,8 +1,8 @@
 <?php
 declare( strict_types=1 );
 /**
- * BSD Form handler class.
- * This class hooks to the 'P4FB_KEY_PREFIX_send_entry_bsd' action and sends the form entry to the BSD CRM.
+ * Hubspot Form handler class.
+ * This class hooks to the 'P4FB_KEY_PREFIX_send_entry_hubspot' action and sends the form entry to the Hubspot CRM.
  *
  * @package P4FB\Form_Builder
  */
@@ -10,24 +10,24 @@ declare( strict_types=1 );
 namespace P4FB\Form_Builder;
 
 /**
- * Class Entry_Handler_BSD
+ * Class Entry_Handler_Hubspot
  *
  * @package P4FB\Form_Builder
  */
-class Entry_Handler_BSD {
+class Entry_Handler_Hubspot {
 	/**
 	 *  Store the singleton instance
 	 *
-	 * @var  Entry_Handler_BSD
+	 * @var  Entry_Handler_Hubspot
 	 */
 	private static $instance;
 
 	/**
 	 * Create singleton instance.
 	 *
-	 * @return Entry_Handler_BSD
+	 * @return Entry_Handler_Hubspot
 	 */
-	public static function get_instance() {
+	public static function get_instance() :Entry_Handler_Hubspot {
 		if ( ! self::$instance ) {
 			self::$instance = new self();
 		}
@@ -39,8 +39,8 @@ class Entry_Handler_BSD {
 	 * Set up our hooks.
 	 */
 	public function load() {
-		add_filter( P4FB_KEY_PREFIX . 'crm_is_configured_bsd', [ $this, 'crm_is_configured' ] );
-		add_action( P4FB_KEY_PREFIX . 'send_entry_bsd', [ $this, 'send_entry' ], 10, 2 );
+		add_filter( P4FB_KEY_PREFIX . 'crm_is_configured_hubspot', [ $this, 'crm_is_configured' ] );
+		add_action( P4FB_KEY_PREFIX . 'send_entry_hubspot', [ $this, 'send_entry' ], 10, 2 );
 	}
 
 	/**
@@ -49,11 +49,7 @@ class Entry_Handler_BSD {
 	 * @return mixed Whether we have our set up or not.
 	 */
 	public function crm_is_configured() : bool {
-		$options  = get_option( P4FB_SETTINGS_OPTION_NAME );
-		$base_url = $options['base_url'] ?? '';
-		$source   = $options['source'] ?? '';
-
-		return ! ( empty( $base_url ) || empty( $source ) );
+		return true;
 	}
 
 	/**
@@ -70,36 +66,25 @@ class Entry_Handler_BSD {
 		if ( ! $this->crm_is_configured() ) {
 			$passed_response['code']  = 'error';
 			$passed_response['error'] = __( 'Not configured', 'planet4-form-builder' );
-
-			return;
 		}
 
-		$options        = get_option( P4FB_SETTINGS_OPTION_NAME );
-		$base_url       = $options['base_url'] ?? '';
-		$source         = $options['source'] ?? '';
-		$args['source'] = $source;
-		if ( isset( $data['mapped_data']['subsource'] ) ) {
-			$args['subsource'] = $data['mapped_data']['subsource'];
-		}
-		$url = add_query_arg( $args, $base_url );
-
+		$options   = get_option( P4FB_SETTINGS_OPTION_NAME );
+		$form_guid = $ptions['form_guid'] ?? '';
+		$portal_id = $ptions['portal_id'] ?? '';
+		// POST https://api.hsforms.com/submissions/v3/integration/submit/:portalId/:formGuid.
+		$data['fields'] = [];
+		exit(var_dump($data['mapped_data']));
+		$api_url  = 'https://api.hsforms.com/submissions/v3/integration/submit/' . $portal_id . '/' . $form_guid;
 		$response = wp_remote_post(
-			esc_url_raw( $url ),
+			esc_url_raw( $api_url ),
 			[
-				'body'        => $data['mapped_data'],
-				'method'      => 'POST',
-				'timeout'     => 45,
-				'redirection' => 1,
-				'httpversion' => '1.1',
-				'blocking'    => true,
-				'headers'     => [
-					'x-sender'     => 'planet4-form-builder',
-					'Content-Type' => 'application/x-www-form-urlencoded',
-				],
+				'body' => $data,
 			]
 		);
 
 		$transmission_success = false;
+		$response_code        = '';
+		$response_body        = '';
 		if ( ! empty( $response ) && ! is_wp_error( $response ) ) {
 			$response_code = (int) wp_remote_retrieve_response_code( $response );
 			if ( $response_code < 400 ) {

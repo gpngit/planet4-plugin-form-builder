@@ -20,6 +20,10 @@
     margin: 0
 }
 
+.p4fb label {
+    color: #fff;
+}
+
 .p4fb form .custom-select,
 .p4fb form button,
 .p4fb form input,

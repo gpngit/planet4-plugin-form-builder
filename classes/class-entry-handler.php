@@ -39,7 +39,7 @@ class Entry_Handler {
 	 *
 	 * @return Entry_Handler
 	 */
-	public static function get_instance() {
+	public static function get_instance() :Entry_Handler {
 		if ( ! self::$instance ) {
 			self::$instance = new self();
 		}
@@ -63,7 +63,7 @@ class Entry_Handler {
 	 * @param array    $form_data The form submission data.
 	 * @param int      $entry_id  The entry reference.
 	 */
-	public function entry_handler( \WP_Post $form, array $form_data, int $entry_id ) {
+	public function entry_handler( \WP_Post $form, array $form_data, int $entry_id ) {var_dump($form_data);
 		$mapping_id  = get_post_meta( $form->ID, P4FB_KEY_PREFIX . 'mapping_id', true );
 		$mapped_data = $this->get_mapped_data( $entry_id );
 		$form_type   = get_post_meta( $form->ID, P4FB_KEY_PREFIX . 'form_type', true );

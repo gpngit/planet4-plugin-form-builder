@@ -159,7 +159,7 @@ class Settings_Page_BSD {
 		}
 
 		if ( isset( $input['api_retries'] ) ) {
-			$input['api_retries'] = intval( $input['api_retries'] );
+			$input['api_retries'] = (int) $input['api_retries'];
 		}
 
 		return $input;

@@ -170,8 +170,8 @@ class Form_Builder {
 	 */
 	public function get_crm_type_options() : array {
 		return apply_filters( 'p4fb_get_crm_options', [
-			'en'  => esc_html__( 'Engaging Networks', 'planet4-form-builder' ),
-			'sf'  => esc_html__( 'Salesforce', 'planet4-form-builder' ),
+			//'en'  => esc_html__( 'Engaging Networks', 'planet4-form-builder' ),
+			//'sf'  => esc_html__( 'Salesforce', 'planet4-form-builder' ),
 			'hs'  => esc_html__( 'Hubspot', 'planet4-form-builder' ),
 			'bsd' => esc_html__( 'BSD', 'planet4-form-builder' ),
 		] );
@@ -271,15 +271,14 @@ class Form_Builder {
 				'name'    => esc_html__( 'Field type', 'planet4-form-builder' ),
 				'type'    => 'select',
 				'options' => [
-					'text'           => __( 'Text field', 'planet4-form-builder' ),
-					'email'          => __( 'Email field', 'planet4-form-builder' ),
-					'tel'            => __( 'Telephone field', 'planet4-form-builder' ),
-					'textarea'       => __( 'Text area', 'planet4-form-builder' ),
-					'select'         => __( 'Dropdown select', 'planet4-form-builder' ),
-					'checkbox'       => __( 'Checkbox', 'planet4-form-builder' ),
-					'checkbox-group' => __( 'Checkbox group', 'planet4-form-builder' ),
-					'radio-group'    => __( 'Radio button group', 'planet4-form-builder' ),
-					'hidden'         => __( 'Hidden value', 'planet4-form-builder' ),
+					'text'     => __( 'Text field', 'planet4-form-builder' ),
+					'email'    => __( 'Email field', 'planet4-form-builder' ),
+					'tel'      => __( 'Telephone field', 'planet4-form-builder' ),
+					'textarea' => __( 'Text area', 'planet4-form-builder' ),
+					'select'   => __( 'Dropdown select', 'planet4-form-builder' ),
+					'checkbox' => __( 'Checkbox', 'planet4-form-builder' ),
+					'hidden'   => __( 'Hidden value', 'planet4-form-builder' ),
+					'date'     => __( 'Date', 'planet4-form-builder' ),
 				],
 			]
 		);
@@ -358,10 +357,21 @@ class Form_Builder {
 	 *
 	 * @param string|array $value The value from the form submission or empty string.
 	 *
-	 * @return string|array The sanitized value.
+	 * @return string The sanitized value.
 	 */
-	public function sanitize_field_text( $value ) {
+	public function sanitize_field_text( $value ) :string {
 		return sanitize_text_field( $value );
+	}
+
+	/**
+	 * Simple sanitization for date field.
+	 *
+	 * @param string $value The value from the form submission or empty string.
+	 *
+	 * @return string The sanitized value.
+	 */
+	public function sanitize_field_date( $value ) :string {
+		return $value;
 	}
 
 	/**
@@ -395,9 +405,9 @@ class Form_Builder {
 	 *
 	 * @param string|array $value The value from the form submission or empty string.
 	 *
-	 * @return string|array The sanitized value.
+	 * @return string The sanitized value.
 	 */
-	public function sanitize_field_textarea( $value ) {
+	public function sanitize_field_textarea( $value ) :string {
 		return sanitize_textarea_field( $value );
 	}
 
@@ -406,9 +416,9 @@ class Form_Builder {
 	 *
 	 * @param string|array $value The value from the form submission or empty string.
 	 *
-	 * @return string|array The sanitized value.
+	 * @return string The sanitized value.
 	 */
-	public function sanitize_field_select( $value ) {
+	public function sanitize_field_select( $value ) :string {
 		return sanitize_text_field( $value );
 	}
 
@@ -417,9 +427,9 @@ class Form_Builder {
 	 *
 	 * @param string|array $value The value from the form submission or empty string.
 	 *
-	 * @return string|array The sanitized value.
+	 * @return string The sanitized value.
 	 */
-	public function sanitize_field_checkbox( $value ) {
+	public function sanitize_field_checkbox( $value ) :string {
 		return sanitize_text_field( $value );
 	}
 
@@ -463,6 +473,23 @@ class Form_Builder {
 	 * @return boolean|string False if no error. Error message if there is an error.
 	 */
 	public function validate_field_text( $value, \WP_Post $form, array $field ) {
+		if ( isset( $field['required'] ) && $field['required'] && empty( $value ) ) {
+			return __( 'Required field missing.', 'planet4-form-builder' );
+		}
+
+		return false;
+	}
+
+	/**
+	 * Simple validation for date field.
+	 *
+	 * @param string|array $value The value from the form submission or empty string.
+	 * @param \WP_Post     $form  The CRM form.
+	 * @param array        $field The field definition.
+	 *
+	 * @return boolean|string False if no error. Error message if there is an error.
+	 */
+	public function validate_field_date( $value, \WP_Post $form, array $field ) {
 		if ( isset( $field['required'] ) && $field['required'] && empty( $value ) ) {
 			return __( 'Required field missing.', 'planet4-form-builder' );
 		}
