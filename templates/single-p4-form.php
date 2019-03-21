@@ -9,7 +9,7 @@ use Timber\Post;
 use Timber\Timber;
 
 $context = Timber::get_context();
-$form_id = get_query_var('form_id');
+$form_id = get_query_var('form_id' );
 // If called from the shortcode, the post is already set.
 if ( empty( $context['post'] ) ) {
 	$context['post'] = new Post( $form_id );

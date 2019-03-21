@@ -1,4 +1,5 @@
 <?php
+declare( strict_types=1 );
 /**
  * BSD Form handler class.
  * This class hooks to the 'P4FB_KEY_PREFIX_send_entry_bsd' action and sends the form entry to the BSD CRM.

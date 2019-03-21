@@ -1,4 +1,5 @@
 <?php
+declare( strict_types=1 );
 /**
  * Part of the Planet4 Form Builder.
  */
@@ -57,7 +58,7 @@ class Settings_Page_BSD {
 	/**
 	 * Hook for action P4 Form builder add settings section.
 	 *
-	 * @param string $settings_option The option key for the settings.
+	 * @param string $option_key The option key for the settings.
 	 */
 	public function add_settings_section( string $option_key ) {
 		$this->option_key = $option_key;

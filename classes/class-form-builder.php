@@ -1,4 +1,5 @@
 <?php
+declare( strict_types=1 );
 /**
  * Base form builder class.
  */
@@ -54,6 +55,7 @@ class Form_Builder {
 		/* Default sanitization */
 		add_filter( 'p4fb_sanitize_field_text', [ $this, 'sanitize_field_text' ], 10, 3 );
 		add_filter( 'p4fb_sanitize_field_email', [ $this, 'sanitize_field_email' ], 10, 3 );
+		add_filter( 'p4fb_sanitize_field_tel', [ $this, 'sanitize_field_tel' ], 10, 3 );
 		add_filter( 'p4fb_sanitize_field_textarea', [ $this, 'sanitize_field_textarea' ], 10, 3 );
 		add_filter( 'p4fb_sanitize_field_select', [ $this, 'sanitize_field_select' ], 10, 3 );
 		add_filter( 'p4fb_sanitize_field_checkbox', [ $this, 'sanitize_field_checkbox' ], 10, 3 );
@@ -62,13 +64,15 @@ class Form_Builder {
 		add_filter( 'p4fb_sanitize_field_hidden', [ $this, 'sanitize_field_text' ], 10, 3 );
 
 		/* Default validation */
-		add_filter( 'p4fb_validate_field_text', [ $this, 'validate_field_text' ], 10, 4 );
-		add_filter( 'p4fb_validate_field_textarea', [ $this, 'validate_field_textarea' ], 10, 4 );
-		add_filter( 'p4fb_validate_field_select', [ $this, 'validate_field_select' ], 10, 4 );
-		add_filter( 'p4fb_validate_field_checkbox', [ $this, 'validate_field_checkbox' ], 10, 4 );
-		add_filter( 'p4fb_validate_field_checkbox-group', [ $this, 'validate_field_checkbox_group' ], 10, 4 );
-		add_filter( 'p4fb_validate_field_radio-group', [ $this, 'validate_field_radio_group' ], 10, 4 );
-		add_filter( 'p4fb_validate_field_hidden', [ $this, 'validate_field_text' ], 10, 4 );
+		add_filter( 'p4fb_validate_field_text', [ $this, 'validate_field_text' ], 10, 3 );
+		add_filter( 'p4fb_validate_field_textarea', [ $this, 'validate_field_textarea' ], 10, 3 );
+		add_filter( 'p4fb_validate_field_select', [ $this, 'validate_field_select' ], 10, 3 );
+		add_filter( 'p4fb_validate_field_checkbox', [ $this, 'validate_field_checkbox' ], 10, 3 );
+		add_filter( 'p4fb_validate_field_checkbox-group', [ $this, 'validate_field_checkbox_group' ], 10, 3 );
+		add_filter( 'p4fb_validate_field_radio-group', [ $this, 'validate_field_radio_group' ], 10, 3 );
+		add_filter( 'p4fb_validate_field_hidden', [ $this, 'validate_field_text' ], 10, 3 );
+		add_filter( 'p4fb_validate_field_email', [ $this, 'validate_field_email' ], 10, 3 );
+		add_filter( 'p4fb_validate_field_tel', [ $this, 'validate_field_tel' ], 10, 3 );
 
 		Timber::$locations = [ P4FB_PLUGIN_DIR . '/templates/views' ];
 	}
@@ -260,21 +264,25 @@ class Form_Builder {
 			'type'        => 'textarea_small',
 		] );
 
-		$cmb_fields_mb->add_group_field( $group_field_id, [
-			'id'               => 'type',
-			'name'             => esc_html__( 'Field type', 'planet4-form-builder' ),
-			'type'             => 'select',
-			'options'          => [
-				'text'           => __( 'Text field', 'planet4-form-builder' ),
-				'email'          => __( 'Email field', 'planet4-form-builder' ),
-				'textarea'       => __( 'Text area', 'planet4-form-builder' ),
-				'select'         => __( 'Dropdown select', 'planet4-form-builder' ),
-				'checkbox'       => __( 'Checkbox', 'planet4-form-builder' ),
-				'checkbox-group' => __( 'Checkbox group', 'planet4-form-builder' ),
-				'radio-group'    => __( 'Radio button group', 'planet4-form-builder' ),
-				'hidden'         => __( 'Hidden value', 'planet4-form-builder' ),
-			],
-		] );
+		$cmb_fields_mb->add_group_field(
+			$group_field_id,
+			[
+				'id'      => 'type',
+				'name'    => esc_html__( 'Field type', 'planet4-form-builder' ),
+				'type'    => 'select',
+				'options' => [
+					'text'           => __( 'Text field', 'planet4-form-builder' ),
+					'email'          => __( 'Email field', 'planet4-form-builder' ),
+					'tel'            => __( 'Telephone field', 'planet4-form-builder' ),
+					'textarea'       => __( 'Text area', 'planet4-form-builder' ),
+					'select'         => __( 'Dropdown select', 'planet4-form-builder' ),
+					'checkbox'       => __( 'Checkbox', 'planet4-form-builder' ),
+					'checkbox-group' => __( 'Checkbox group', 'planet4-form-builder' ),
+					'radio-group'    => __( 'Radio button group', 'planet4-form-builder' ),
+					'hidden'         => __( 'Hidden value', 'planet4-form-builder' ),
+				],
+			]
+		);
 
 		$cmb_fields_mb->add_group_field( $group_field_id, [
 			'id'   => 'label',
@@ -365,6 +373,21 @@ class Form_Builder {
 	 */
 	public function sanitize_field_email( $value ) :string {
 		return sanitize_email( $value );
+	}
+
+	/**
+	 * Sanitize telephone number.
+	 *
+	 * @param string $value The phone to sanitize.
+	 *
+	 * @return string
+	 */
+	public function sanitize_field_telephone( $value ) :string {
+		// Requirement:  99-99999999 or 99-9999999 (area code - 8 or 9 digits).
+		if ( preg_match( '/^\d\d\-\d\d\d\d\d\d\d\d\d?$/', $value ) ) {
+			return $value;
+		}
+		return '';
 	}
 
 	/**
@@ -464,6 +487,22 @@ class Form_Builder {
 	}
 
 	/**
+	 * Simple validation for telephone field.
+	 *
+	 * @param string|array $value The value from the form submission or empty string.
+	 * @param \WP_Post     $form  The CRM form.
+	 * @param array        $field The field definition.
+	 *
+	 * @return boolean|string False if no error. Error message if there is an error
+	 */
+	public function validate_field_tel( $value, \WP_Post $form, array $field ) {
+		if ( ! empty( $field['required'] ) && empty( $value ) ) {
+			return __( 'Required field missing.', 'planet4-form-builder' );
+		}
+		return false;
+	}
+
+	/**
 	 * Simple validation for textarea field.
 	 *
 	 * @param string|array $value The value from the form submission or empty string.
@@ -486,11 +525,10 @@ class Form_Builder {
 	 * @param string|array $value The value from the form submission or empty string.
 	 * @param \WP_Post     $form  The CRM form.
 	 * @param array        $field The field definition.
-	 * @param bool|array   $error The current error condition.
 	 *
 	 * @return boolean|string False if no error. Error message if there is an error.
 	 */
-	public function validate_field_select( $value, \WP_Post $form, array $field, $error ) {
+	public function validate_field_select( $value, \WP_Post $form, array $field ) {
 		$options = $this->get_options( $field );
 		if ( in_array( $value, array_keys( $options ), true ) || in_array( $value, $options, true ) ) {
 			return false;
@@ -505,11 +543,10 @@ class Form_Builder {
 	 * @param string|array $value The value from the form submission or empty string.
 	 * @param \WP_Post     $form  The CRM form.
 	 * @param array        $field The field definition.
-	 * @param bool|array   $error The current error condition.
 	 *
 	 * @return boolean|string False if no error. Error message if there is an error.
 	 */
-	public function validate_field_checkbox( $value, \WP_Post $form, array $field, $error ) {
+	public function validate_field_checkbox( $value, \WP_Post $form, array $field ) {
 		if ( isset( $field['required'] ) && $field['required'] && empty( $value ) ) {
 			return __( 'You must check the box.', 'planet4-form-builder' );
 		}
@@ -523,11 +560,10 @@ class Form_Builder {
 	 * @param string|array $value The value from the form submission or empty string.
 	 * @param \WP_Post     $form  The CRM form.
 	 * @param array        $field The field definition.
-	 * @param bool|array   $error The current error condition.
 	 *
 	 * @return boolean|array The current error. False if no error. An array [ 'field_name' => 'error message' ] is there is an error.
 	 */
-	public function validate_field_checkbox_group( $value, \WP_Post $form, array $field, $error ) {
+	public function validate_field_checkbox_group( $value, \WP_Post $form, array $field ) {
 		if ( isset( $field['required'] ) && $field['required'] && empty( $value ) ) {
 			return __( 'You must check an option.', 'planet4-form-builder' );
 		}
@@ -546,11 +582,10 @@ class Form_Builder {
 	 * @param string|array $value The value from the form submission or empty string.
 	 * @param \WP_Post     $form  The CRM form.
 	 * @param array        $field The field definition.
-	 * @param bool|array   $error The current error condition.
 	 *
 	 * @return boolean|array The current error. False if no error. An array [ 'field_name' => 'error message' ] is there is an error.
 	 */
-	public function validate_field_radio_group( $value, \WP_Post $form, array $field, $error ) {
+	public function validate_field_radio_group( $value, \WP_Post $form, array $field ) {
 		$options = $this->get_options( $field );
 		if ( ! in_array( $value, array_keys( $options ), true ) && ! in_array( $value, $options, true ) ) {
 			return __( 'You must choose an option.', 'planet4-form-builder' );

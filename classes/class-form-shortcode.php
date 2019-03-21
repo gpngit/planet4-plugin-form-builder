@@ -1,4 +1,5 @@
 <?php
+declare( strict_types=1 );
 /**
  * Form shortcode class.
  *
@@ -136,7 +137,7 @@ class Form_Shortcode {
 			</p>
 			<?php
 			set_query_var( 'form_id', $attr['form'] );
-			Form_Builder::$template_loader->get_template_part( 'single', P4FB_FORM_CPT, true );
+			Form_Builder::$template_loader->get_template_part( 'single', P4FB_FORM_CPT );
 			?>
 		</div>
 		<?php

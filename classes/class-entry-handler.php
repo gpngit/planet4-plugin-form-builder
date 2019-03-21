@@ -1,4 +1,5 @@
 <?php
+declare( strict_types=1 );
 /**
  * Entry handler class.
  * This class hooks to the 'p4fb_post_save_form' action and enqueues the form entry to be sent off to a CRM.

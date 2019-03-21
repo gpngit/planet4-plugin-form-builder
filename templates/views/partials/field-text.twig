@@ -4,7 +4,8 @@
 			   type="text" name="{{ field.name }}"
 			   value="{{ field.value }}"
 			   placeholder="{{ field.label }}"
-				{{ 'on' == field.required or 'email' == field.type ? 'required' : '' }}
+				{{ 'on' == field.required ? 'required' : '' }}
 		/>
 	</div>
 </div>
+
