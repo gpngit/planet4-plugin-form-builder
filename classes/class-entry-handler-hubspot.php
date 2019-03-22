@@ -55,7 +55,7 @@ class Entry_Handler_Hubspot {
 	/**
 	 * Send the form entry details to the API endpoint.
 	 *
-	 * @param array $data            The id of the entry, mapped fields, and other supporting data.
+	 * @param array $data The id of the entry, mapped fields, and other supporting data.
 	 * @param array $passed_response Fill in the response details.
 	 */
 	public function send_entry( array $data, array &$passed_response ) {
@@ -68,22 +68,34 @@ class Entry_Handler_Hubspot {
 			$passed_response['error'] = __( 'Not configured', 'planet4-form-builder' );
 		}
 
-		$options   = get_option( P4FB_SETTINGS_OPTION_NAME );
-		$form_guid = $options['form_guid'] ?? '';
-		$portal_id = $options['portal_id'] ?? '';
-		// POST https://api.hsforms.com/submissions/v3/integration/submit/:portalId/:formGuid.
-		$body['fields'] = array_walk( $data['mapped_data'], function( &$entry, $key ) {
-			return [ 'name' => $key, 'value' => $entry ];
-		} );
+		$options         = get_option( P4FB_SETTINGS_OPTION_NAME );
+		$form_guid       = $options['form_guid'] ?? '';
+		$portal_id       = $options['portal_id'] ?? '';
+		$hubspotutk      = $_COOKIE['hubspotutk']; // grab the cookie from the visitors browser.
+		$ip_addr         = $_SERVER['REMOTE_ADDR']; // IP address too.
+		$hs_context      = [
+			'hutk'      => $hubspotutk,
+			'ipAddress' => $ip_addr,
+			'pageUrl'   => home_url(),
+			'pageName'  => get_the_title(),
+		];
+		$hs_context_json = wp_json_encode( $hs_context );
 
-		$api_url  = 'https://api.hsforms.com/submissions/v3/integration/submit/' . $portal_id . '/' . $form_guid;
-		$response = wp_remote_post(
+		$body_fields[]             = $data['mapped_data'];
+		$body_fields['redirect_url'] = home_url();
+		$body_fields['hs_context'] = $hs_context_json;
+		$post_data                 = http_build_query( $body_fields );
+		$api_url                   = "https://forms.hubspot.com/uploads/form/v2/{$portal_id}/{$form_guid}";
+		$response                  = wp_remote_post(
 			esc_url_raw( $api_url ),
 			[
-				'body' => wp_json_encode( $body ),
+				'body'    => $post_data,
+				'headers' => [
+					'Content-Type' => 'application/x-www-form-urlencoded',
+				],
 			]
 		);
-error_log($response);
+
 		$transmission_success = false;
 		$response_code        = '';
 		$response_body        = '';
