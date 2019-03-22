@@ -27,7 +27,7 @@ class Entry_Handler_Hubspot {
 	 *
 	 * @return Entry_Handler_Hubspot
 	 */
-	public static function get_instance() :Entry_Handler_Hubspot {
+	public static function get_instance(): Entry_Handler_Hubspot {
 		if ( ! self::$instance ) {
 			self::$instance = new self();
 		}
@@ -48,7 +48,7 @@ class Entry_Handler_Hubspot {
 	 *
 	 * @return mixed Whether we have our set up or not.
 	 */
-	public function crm_is_configured() : bool {
+	public function crm_is_configured(): bool {
 		return true;
 	}
 
@@ -68,21 +68,22 @@ class Entry_Handler_Hubspot {
 			$passed_response['error'] = __( 'Not configured', 'planet4-form-builder' );
 		}
 
-		$options         = get_option( P4FB_SETTINGS_OPTION_NAME );
-		$form_guid       = $options['form_guid'] ?? '';
-		$portal_id       = $options['portal_id'] ?? '';
-		$hubspotutk      = $_COOKIE['hubspotutk']; // grab the cookie from the visitors browser.
-		$ip_addr         = $_SERVER['REMOTE_ADDR']; // IP address too.
+		$options    = get_option( P4FB_SETTINGS_OPTION_NAME );
+		$form_guid  = $options['form_guid'] ?? '';
+		$portal_id  = $options['portal_id'] ?? '';
+		$hubspotutk = $_COOKIE['hubspotutk']; // grab the cookie from the visitors browser.
+		$ip_addr    = $_SERVER['REMOTE_ADDR']; // IP address too.
+		global $wp;
+		$current_slug    = add_query_arg( [], $wp->request );
 		$hs_context      = [
 			'hutk'      => $hubspotutk,
 			'ipAddress' => $ip_addr,
-			'pageUrl'   => home_url(),
+			'pageUrl'   => home_url( $current_slug ),
 			'pageName'  => get_the_title(),
 		];
 		$hs_context_json = wp_json_encode( $hs_context );
 
 		$body_fields[]             = $data['mapped_data'];
-		$body_fields['redirect_url'] = home_url();
 		$body_fields['hs_context'] = $hs_context_json;
 		$post_data                 = http_build_query( $body_fields );
 		$api_url                   = "https://forms.hubspot.com/uploads/form/v2/{$portal_id}/{$form_guid}";

@@ -1,12 +1,10 @@
-<div class="{% if fields.en_form_style == 'full-width-bg' %}col-md-4{% endif %} submit">
+<div class="{% if fields.p4fb_form_style == 'full-width-bg' %}col-md-4{% endif %} submit">
 	<input
-			type="submit"
-			form="p4fb_form"
-			name="p4efb_form_save_button"
-			id="p4fb_form_save_button"
-			class="btn btn-primary btn-block {% if fields.fb_form_style != 'full-width-bg' %}w-auto{% endif %}"
-			value="{{ post.p4_form_submit_text }}" />
-
-
-	<div class="enform-notice"></div>
+		type="submit"
+		form="p4fb_form"
+		name="p4efb_form_save_button"
+		id="p4fb_form_save_button"
+		class="btn btn-primary btn-block {% if fields.fb_form_style != 'full-width-bg' %}w-auto{% endif %}"
+		value="{{ post.p4_form_submit_text }}"
+	/>
 </div>
