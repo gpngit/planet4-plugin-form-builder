@@ -66,6 +66,7 @@ class Entry_Handler_Hubspot {
 		if ( ! $this->crm_is_configured() ) {
 			$passed_response['code']  = 'error';
 			$passed_response['error'] = __( 'Not configured', 'planet4-form-builder' );
+			return;
 		}
 
 		$options    = get_option( P4FB_SETTINGS_OPTION_NAME );
