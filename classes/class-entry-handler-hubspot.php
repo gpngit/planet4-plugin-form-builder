@@ -72,13 +72,15 @@ class Entry_Handler_Hubspot {
 		$form_guid = $ptions['form_guid'] ?? '';
 		$portal_id = $ptions['portal_id'] ?? '';
 		// POST https://api.hsforms.com/submissions/v3/integration/submit/:portalId/:formGuid.
-		$data['fields'] = [];
-		exit(var_dump($data['mapped_data']));
+		$body['fields'] = array_walk( $data['mapped_data'], function( &$entry, $key ) {
+			return [ 'name' => $key, 'value' => $entry ];
+		} );
+
 		$api_url  = 'https://api.hsforms.com/submissions/v3/integration/submit/' . $portal_id . '/' . $form_guid;
 		$response = wp_remote_post(
 			esc_url_raw( $api_url ),
 			[
-				'body' => $data,
+				'body' => wp_json_encode( $body ),
 			]
 		);
 

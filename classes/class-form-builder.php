@@ -62,6 +62,7 @@ class Form_Builder {
 		add_filter( 'p4fb_sanitize_field_checkbox-group', [ $this, 'sanitize_field_checkbox_group' ], 10, 3 );
 		add_filter( 'p4fb_sanitize_field_radio-group', [ $this, 'sanitize_field_radio_group' ], 10, 3 );
 		add_filter( 'p4fb_sanitize_field_hidden', [ $this, 'sanitize_field_text' ], 10, 3 );
+		add_filter( 'p4fb_sanitize_field_date', [ $this, 'sanitize_field_date' ], 10, 3 );
 
 		/* Default validation */
 		add_filter( 'p4fb_validate_field_text', [ $this, 'validate_field_text' ], 10, 3 );
@@ -73,6 +74,7 @@ class Form_Builder {
 		add_filter( 'p4fb_validate_field_hidden', [ $this, 'validate_field_text' ], 10, 3 );
 		add_filter( 'p4fb_validate_field_email', [ $this, 'validate_field_email' ], 10, 3 );
 		add_filter( 'p4fb_validate_field_tel', [ $this, 'validate_field_tel' ], 10, 3 );
+		add_filter( 'p4fb_validate_field_date', [ $this, 'validate_field_date' ], 10, 3 );
 
 		Timber::$locations = [ P4FB_PLUGIN_DIR . '/templates/views' ];
 	}
