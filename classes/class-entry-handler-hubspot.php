@@ -71,7 +71,7 @@ class Entry_Handler_Hubspot {
 		$options    = get_option( P4FB_SETTINGS_OPTION_NAME );
 		$form_guid  = $options['form_guid'] ?? '';
 		$portal_id  = $options['portal_id'] ?? '';
-		$hubspotutk = $_COOKIE['hubspotutk']; // grab the cookie from the visitors browser.
+		$hubspotutk = $_COOKIE['hubspotutk'] ?? ''; // grab the cookie from the visitors browser.
 		$ip_addr    = $_SERVER['REMOTE_ADDR']; // IP address too.
 		global $wp;
 		$current_slug    = add_query_arg( [], $wp->request );
