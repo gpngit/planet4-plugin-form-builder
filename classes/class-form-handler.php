@@ -125,15 +125,16 @@ class Form_Handler {
 			if ( isset( $errors['id'] ) ) {
 				do_action( "p4fb_post_save_form_{$form_type}", $form, $form_data, $errors['id'] );
 				do_action( 'p4fb_post_save_form', $form, $form_data, $errors['id'] );
-				unset( $errors['id'] );
 			}
 		}
 
 		global $wp;
-		$current_slug = add_query_arg( [
-			'p4fb_errors' => $errors,
-		], $wp->request );
-
+		$current_slug = add_query_arg( [], $wp->request );
+		unset( $errors['id'] );
+		// If $errors is not empty then it contains error messages.
+		if ( ! empty( $errors ) ) {
+			update_option( 'p4fb_submission_errors_' . $form_id, $errors );
+		}
 		wp_safe_redirect( home_url( $current_slug ) );
 		exit;
 	}

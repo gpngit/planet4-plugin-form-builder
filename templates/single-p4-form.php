@@ -10,10 +10,12 @@ use Timber\Timber;
 
 $context     = Timber::get_context();
 $form_id     = get_query_var( 'form_id' );
-$form_errors = $_GET['p4fb_errors'] ?? [];
+$form_errors = get_option( 'p4fb_submission_errors_' . $form_id );
 if ( ! empty( $form_errors ) ) {
 	$context['form_errors'] = $form_errors;
 }
+update_option('p4fb_submission_errors_' . $form_id, [] );
+
 // If called from the shortcode, the post is already set.
 if ( empty( $context['post'] ) ) {
 	$context['post'] = new Post( $form_id );
