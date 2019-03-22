@@ -69,8 +69,8 @@ class Entry_Handler_Hubspot {
 		}
 
 		$options   = get_option( P4FB_SETTINGS_OPTION_NAME );
-		$form_guid = $ptions['form_guid'] ?? '';
-		$portal_id = $ptions['portal_id'] ?? '';
+		$form_guid = $options['form_guid'] ?? '';
+		$portal_id = $options['portal_id'] ?? '';
 		// POST https://api.hsforms.com/submissions/v3/integration/submit/:portalId/:formGuid.
 		$body['fields'] = array_walk( $data['mapped_data'], function( &$entry, $key ) {
 			return [ 'name' => $key, 'value' => $entry ];
@@ -83,7 +83,7 @@ class Entry_Handler_Hubspot {
 				'body' => wp_json_encode( $body ),
 			]
 		);
-
+error_log($response);
 		$transmission_success = false;
 		$response_code        = '';
 		$response_body        = '';

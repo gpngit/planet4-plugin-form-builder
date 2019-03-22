@@ -171,11 +171,12 @@ class Form_Builder {
 	 * @return array The list of types.
 	 */
 	public function get_crm_type_options() : array {
+		// The key is stored as the form_type which is used in the crm_is_configured action.
 		return apply_filters( 'p4fb_get_crm_options', [
 			//'en'  => esc_html__( 'Engaging Networks', 'planet4-form-builder' ),
 			//'sf'  => esc_html__( 'Salesforce', 'planet4-form-builder' ),
-			'hs'  => esc_html__( 'Hubspot', 'planet4-form-builder' ),
-			'bsd' => esc_html__( 'BSD', 'planet4-form-builder' ),
+			'hubspot'  => esc_html__( 'Hubspot', 'planet4-form-builder' ),
+			'bsd'      => esc_html__( 'BSD', 'planet4-form-builder' ),
 		] );
 	}
 
@@ -394,7 +395,7 @@ class Form_Builder {
 	 *
 	 * @return string
 	 */
-	public function sanitize_field_telephone( $value ) :string {
+	public function sanitize_field_tel( $value ) :string {
 		// Requirement:  99-99999999 or 99-9999999 (area code - 8 or 9 digits).
 		if ( preg_match( '/^\d\d\-\d\d\d\d\d\d\d\d\d?$/', $value ) ) {
 			return $value;
