@@ -9,12 +9,6 @@
 	  "email": "planet4-group@greenpeace.org"
 	}
   ],
-  "repositories": [
-	{
-	  "type": "git",
-	  "url": "https://github.com/wp-shortcake/shortcake.git"
-	}
-  ],
   "require-dev": {
 	"squizlabs/php_codesniffer": "^3.3.2",
 	"wp-coding-standards/wpcs": "^1.1.0",
