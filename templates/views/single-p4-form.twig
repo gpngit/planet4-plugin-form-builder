@@ -1,7 +1,7 @@
-{% if (form_errors) %}
-	<div class="errors"><p>There were errors. Please check your answer.</p></div>
-{% endif %}
 <form id="p4fb_form" action="{{ form_submit_url }}" method="post">
+	{% if (form_errors) %}
+		<div class="errors"><p>There were errors. Please check your answer.</p></div>
+	{% endif %}
 	{{ fn( 'wp_nonce_field', nonce_action, nonce_name, false, false )|raw }}
 	<input type="hidden" name="action" value="{{ action }}">
 	<input type="hidden" name="p4_form_id" value="{{ post.ID }}">
