@@ -1,4 +1,5 @@
 <?php
+declare( strict_types=1 );
 /**
  * Part of the Planet4 Form Builder.
  */

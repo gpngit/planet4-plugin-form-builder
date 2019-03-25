@@ -1,7 +1,10 @@
-<label class="p4fb-field p4fb-field-{{ field.type | e('html_attr') }} {{ field.name | e('html_attr') }}">
-	{{ field.label | e('esc_html') }}
-	{% if (field.required) %}
-		<small>{{ required_message }}</small>
-	{% endif %}
-	<textarea name="{{ field.name }}" class="{{ field.class }}">{{ field.value | e('esc_html') }}</textarea>
-</label>
+<div class="p4fb__field p4fb__field-{{ field.type | e('html_attr') }} p4fb__field-{{ field.name | e('html_attr') }}">
+	<div class="p4fb__field__element p4fb__field__element--{{ field.type | e('html_attr') }} form-group">
+	<textarea
+			name="{{ field.name }}"
+			class="{{ field.class }}"
+			{{ 'on' == field.required ? "required=required" : '' }}
+			placeholder="{{ field.label }}"
+	>{{ field.value | e('esc_html') }}</textarea>
+	</div>
+</div>

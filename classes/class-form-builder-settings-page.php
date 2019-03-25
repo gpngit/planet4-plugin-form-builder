@@ -1,4 +1,5 @@
 <?php
+declare( strict_types=1 );
 /**
  * Part of the Planet4 Form Builder.
  */
@@ -105,7 +106,7 @@ class Form_Builder_Settings_Page {
 		wp_enqueue_media();
 		?>
 		<div class="wrap">
-			<h1><?php echo get_admin_page_title(); ?></h1>
+			<h1><?php echo esc_html( get_admin_page_title() ); ?></h1>
 			<form action="options.php" method="post">
 				<?php
 				settings_fields( 'p4fb_settings_group' );
@@ -120,7 +121,7 @@ class Form_Builder_Settings_Page {
 	/**
 	 * Render the CRM Type field.
 	 */
-	function render_crm_type_field() {
+	public function render_crm_type_field() {
 
 		// Get current value.
 		$options       = get_option( P4FB_SETTINGS_OPTION_NAME );
@@ -128,11 +129,11 @@ class Form_Builder_Settings_Page {
 
 		?>
 		<select name="p4fb_settings[crm_type]" class="regular-text crm_type_field">
-			<option value=""><?php echo __( 'Select CRM Type', 'planet4-form-builder' ); ?></option>
+			<option value=""><?php esc_html_e( 'Select CRM Type', 'planet4-form-builder' ); ?></option>
 			<?php
 			foreach ( Form_Builder::get_instance()->get_crm_type_options() as $val => $option ) {
 				?>
-				<option value="<?php echo esc_attr( $val ); ?>" <?php selected( $val, $current_value, true ); ?>><?php echo $option; ?></option>
+				<option value="<?php echo esc_attr( $val ); ?>" <?php selected( $val, $current_value ); ?>><?php echo esc_html( $option ); ?></option>
 				<?php
 			}
 			?>
@@ -149,10 +150,10 @@ class Form_Builder_Settings_Page {
 	 *
 	 * @return array The sanitized input.
 	 */
-	function sanitize_cb( array $input ) : array {
+	public function sanitize_cb( array $input ) : array {
 		if (
 			! isset( $input['crm_type'] ) ||
-			! in_array( $input['crm_type'], array_keys( Form_Builder::get_instance()->get_crm_type_options() ), true )
+			! array_key_exists( $input['crm_type'], Form_Builder::get_instance()->get_crm_type_options() )
 		) {
 			$input['crm_type'] = '';
 		}

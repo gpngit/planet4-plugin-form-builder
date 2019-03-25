@@ -1,17 +1,15 @@
-<label class="p4fb-field p4fb-field-{{ field.type | e('html_attr') }} {{ field.name | e('html_attr') }}">
-	{{ field.label | e('esc_html') }}
-	{% if (field.required) %}
-		<small>{{ required_message }}</small>
-	{% endif %}
-	<select name="{{ field.name }}">
-		{% for val, option in field.options %}
-			<option
-					value="{{ val | e('html_attr') }}"
-					{% if  field.current_value == val %}
-						selected="selected"
-					{% endif %}
-			>{{ option | e('esc_html') }}
-			</option>
-		{% endfor %}
-	</select>
-</label>
+<div class="p4fb__field p4fb__field--{{ field.type | e('html_attr') }} p4fb__field-{{ field.name | e('html_attr') }}">
+	<div class="en__field__element en__field__element--{{ field.type | e('html_attr') }} form-group" style="display: block;">
+		<select name="{{ field.name }}" class="p4fb__field__input p4fb__field__input--select form-control">
+			{% for val, option in field.options %}
+				<option
+						value="{{ val | e('html_attr') }}"
+						{% if  field.current_value == val %}
+							selected="selected"
+						{% endif %}
+				>{{ option | e('esc_html') }}
+				</option>
+			{% endfor %}
+		</select>
+	</div>
+</div>

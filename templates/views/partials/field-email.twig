@@ -1,0 +1,10 @@
+<div class="p4fb__field p4fb__field-{{ field.type | e('html_attr') }} p4fb__field-{{ field.name | e('html_attr') }}">
+    <div class="p4fb__field__element p4fb__field__element--{{ field.type | e('html_attr') }} form-group">
+        <input class="{{ field.class }} p4fb__field__input p4fb__field__input--{{ field.type | e('html_attr') }} form-control"
+               type="email" name="{{ field.name }}"
+               value="{{ field.value }}"
+               placeholder="{{ field.label }}"
+                {{ 'on' == field.required ? 'required' : '' }}
+        />
+    </div>
+</div>

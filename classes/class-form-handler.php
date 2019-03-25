@@ -1,4 +1,5 @@
 <?php
+declare( strict_types=1 );
 /**
  * Base form handler class.
  */
@@ -11,7 +12,7 @@ class Form_Handler {
 	 *
 	 * @var  Form_Handler
 	 */
-	static $instance;
+	private static $instance;
 
 	/**
 	 * Create singleton instance.
@@ -29,7 +30,7 @@ class Form_Handler {
 	/**
 	 * Set up our hooks.
 	 */
-	function load() {
+	public function load() {
 		$form_action = P4FB_FORM_ACTION;
 		add_action( "admin_post_nopriv_{$form_action}", [ $this, 'form_handler' ] );
 		add_action( "admin_post_{$form_action}", [ $this, 'form_handler' ] );
@@ -42,13 +43,13 @@ class Form_Handler {
 	 * Call action to post-process submission (e.g. send to CRM).
 	 */
 	public function form_handler() {
-		$form_id      = intval( $_POST['p4_form_id'] );
+		$form_id      = (int) $_POST['p4_form_id'];
 		$nonce_action = P4FB_FORM_ACTION . '-' . $form_id;
 		$nonce_name   = P4FB_FORM_NONCE;
 
 		// Check everything is legit...
 		if ( ! wp_verify_nonce( $_POST[ $nonce_name ], $nonce_action ) ) {
-			echo __( 'Error: There was a problem with your form submission.', 'planet4-form-builder' );
+			echo __( 'Error: There was a problem with your form submission.', 'planet4-form-builder' ); // phpcs:ignore WordPress.Security.EscapeOutput
 			exit;
 		}
 
@@ -125,11 +126,16 @@ class Form_Handler {
 				do_action( "p4fb_post_save_form_{$form_type}", $form, $form_data, $errors['id'] );
 				do_action( 'p4fb_post_save_form', $form, $form_data, $errors['id'] );
 			}
-		} else {
-			// Handle errors (likely redisplay the same page)
-			// @Todo: echo 'errors are ' . var_export( $errors, true );
 		}
 
+		global $wp;
+		$current_slug = add_query_arg( [], $wp->request );
+		unset( $errors['id'] );
+		// If $errors is not empty then it contains error messages.
+		if ( ! empty( $errors ) ) {
+			update_option( 'p4fb_submission_errors_' . $form_id, $errors );
+		}
+		wp_safe_redirect( home_url( $current_slug ) );
+		exit;
 	}
-
 }

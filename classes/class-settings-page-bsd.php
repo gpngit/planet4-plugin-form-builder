@@ -1,4 +1,5 @@
 <?php
+declare( strict_types=1 );
 /**
  * Part of the Planet4 Form Builder.
  */
@@ -57,7 +58,7 @@ class Settings_Page_BSD {
 	/**
 	 * Hook for action P4 Form builder add settings section.
 	 *
-	 * @param string $settings_option The option key for the settings.
+	 * @param string $option_key The option key for the settings.
 	 */
 	public function add_settings_section( string $option_key ) {
 		$this->option_key = $option_key;
@@ -93,13 +94,12 @@ class Settings_Page_BSD {
 			$this->section_name
 		);
 
-
 	}
 
 	/**
 	 * Render the Base URL text field.
 	 */
-	function render_base_url_field() {
+	public function render_base_url_field() {
 
 		// Get current value.
 		$options       = get_option( $this->option_key );
@@ -114,7 +114,7 @@ class Settings_Page_BSD {
 	/**
 	 * Render the API secret text field.
 	 */
-	function render_source_field() {
+	public function render_source_field() {
 
 		// Get current value.
 		$options       = get_option( $this->option_key );
@@ -129,7 +129,7 @@ class Settings_Page_BSD {
 	/**
 	 * Render the API retries text field.
 	 */
-	function render_api_retries_field() {
+	public function render_api_retries_field() {
 
 		// Get current value.
 		$options       = get_option( $this->option_key );
@@ -149,7 +149,7 @@ class Settings_Page_BSD {
 	 *
 	 * @return array The sanitized input.
 	 */
-	function sanitize_callback( array $input ) : array {
+	public function sanitize_callback( array $input ) : array {
 		if ( isset( $input['base_url'] ) ) {
 			$input['base_url'] = wp_strip_all_tags( $input['base_url'] );
 		}
@@ -159,7 +159,7 @@ class Settings_Page_BSD {
 		}
 
 		if ( isset( $input['api_retries'] ) ) {
-			$input['api_retries'] = intval( $input['api_retries'] );
+			$input['api_retries'] = (int) $input['api_retries'];
 		}
 
 		return $input;

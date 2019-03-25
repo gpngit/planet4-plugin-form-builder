@@ -1,11 +1,12 @@
-<label class="p4fb-field p4fb-field-{{ field.type | e('html_attr') }} {{ field.name | e('html_attr') }}">
-	<input type="checkbox" name="{{ field.name }}" value="{{ field.value }}"
-			{% if  field.current_value == field.value %}
-				checked="checked"
-			{% endif %}
-	>
-	{{ field.label | e('esc_html') }}
-	{% if (field.required) %}
-		<small>{{ required_message }}</small>
-	{% endif %}
-</label>
+<div class="form-check-label-block custom-control">
+	<input id="{{ field.name }}"
+		   name="{{ field.name }}"
+		   class="p4fb__field__input p4fb__field__input--checkbox"
+		   type="checkbox"
+		   value="{{ field.value }}" {{ 'Y' == field.value ? 'checked' : '' }}
+			{{ 'on' == field.required ? 'required' : '' }} />
+	<label for="{{ field.name }}"
+		   class="custom-control-description form-check-label">
+		{{ field.label }}
+	</label>
+</div>

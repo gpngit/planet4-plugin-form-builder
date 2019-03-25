@@ -1,4 +1,5 @@
 <?php
+declare( strict_types=1 );
 /**
  * Base form entry class.
  */
@@ -13,7 +14,7 @@ class Form_Entry {
 	 *
 	 * @var  Form_Entry
 	 */
-	static $instance;
+	private static $instance;
 
 	/**
 	 * Create singleton instance.
@@ -31,7 +32,7 @@ class Form_Entry {
 	/**
 	 * Register CPT. Set up our hooks.
 	 */
-	function load() {
+	public function load() {
 		add_action( 'init', [ $this, 'register_post_type' ] );
 		add_action( 'p4fb_save_form_submission', [ $this, 'save_form_submission' ], 10, 3 );
 		if ( is_admin() ) {
@@ -113,7 +114,7 @@ class Form_Entry {
 	 *
 	 */
 	public function save_form_submission( array &$errors, WP_Post $form, array $form_data ) {
-		// Create entry post
+		// Create entry post.
 		$entry_id = wp_insert_post( [
 			'post_type'    => P4FB_ENTRY_CPT,
 			// translators: %d is replaced with the current unix timestamp as a unique id.
@@ -164,10 +165,10 @@ class Form_Entry {
 		switch ( $column_name ) {
 			case P4FB_ENTRY_STATUS_META_KEY:
 				$send_status = get_post_meta( $post_id, P4FB_ENTRY_STATUS_META_KEY, true );
-				if ( in_array( $send_status, array_keys( $send_stati ), true ) ) {
-					echo $send_stati[ $send_status ];
+				if ( array_key_exists( $send_status, $send_stati ) ) {
+					echo $send_stati[ $send_status ]; // phpcs:ignore WordPress.Security.EscapeOutput
 				} else {
-					echo __( 'Unknown', 'planet4-form-builder' );
+					echo __( 'Unknown', 'planet4-form-builder' ); // phpcs:ignore WordPress.Security.EscapeOutput
 				}
 				break;
 			case P4FB_ENTRY_RESPONSE_META_KEY:
@@ -175,7 +176,7 @@ class Form_Entry {
 				if ( ! empty( $response ) ) {
 					printf( '<span class="entry-response"><abbr title="%s">%s</abbr></span>',
 						esc_attr( var_export( $response, true ) ), //phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_var_export
-						__( 'Hover mouse to see last response', 'planet4-form-builder' )
+						__( 'Hover mouse to see last response', 'planet4-form-builder' ) // phpcs:ignore WordPress.Security.EscapeOutput
 					);
 				}
 				break;
@@ -237,7 +238,7 @@ class Form_Entry {
 			'enqueued' => 1,
 			'ids'      => $post_id,
 		], $sendback );
-		wp_redirect( $sendback );
+		wp_safe_redirect( $sendback );
 		exit();
 	}
 

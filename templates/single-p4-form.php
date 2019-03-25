@@ -8,10 +8,17 @@ namespace P4FB\Form_Builder\Templates;
 use Timber\Post;
 use Timber\Timber;
 
-$context = Timber::get_context();
-// If called from the shortcode, the post is already set
+$context     = Timber::get_context();
+$form_id     = get_query_var( 'form_id' );
+$form_errors = get_option( 'p4fb_submission_errors_' . $form_id );
+if ( ! empty( $form_errors ) ) {
+	$context['form_errors'] = $form_errors;
+}
+update_option('p4fb_submission_errors_' . $form_id, [] );
+
+// If called from the shortcode, the post is already set.
 if ( empty( $context['post'] ) ) {
-	$context['post'] = new Post();
+	$context['post'] = new Post( $form_id );
 }
 $context['form_submit_url']  = admin_url( 'admin-post.php' );
 $context['action']           = P4FB_FORM_ACTION;
@@ -46,7 +53,7 @@ foreach ( $context['post']->p4_form_fields as $index => $field ) {
 Timber::render(
 	[
 		'single-' . $context['post']->post_type . '.twig',
-		'single.twig',
+		//'single.twig',
 	],
 	$context
 );

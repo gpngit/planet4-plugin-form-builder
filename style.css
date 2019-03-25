@@ -1,0 +1,184 @@
+.p4fb {
+    font-family: Roboto, sans-serif;
+    height: inherit;
+    padding: 20px;
+    background: #074365;
+    margin-bottom: 40px;
+    width: 100%;
+}
+.p4fb h2, .p4fb p { color: white;}
+
+.p4fb-full-width .p4fb {
+    color: #fff
+}
+
+.p4fb-full-width-bg .p4fb {
+    background: 0 0
+}
+
+.p4fb form {
+    margin: 0
+}
+
+.p4fb label {
+    color: #fff;
+}
+
+.p4fb form .custom-select,
+.p4fb form button,
+.p4fb form input,
+.p4fb form select.form-control.p4fb__field__input--select {
+    height: 46px;
+    border-radius: 0;
+    border-color: transparent;
+    margin-bottom: 16px;
+    min-width: 200px
+}
+
+@media (min-width:768px) {
+    .p4fb form .custom-select,
+    .p4fb form button,
+    .p4fb form input,
+    .p4fb form select.form-control.p4fb__field__input--select {
+        margin-bottom: inherit
+    }
+}
+
+.p4fb form .custom-select.is-invalid,
+.p4fb form button.is-invalid,
+.p4fb form input.is-invalid,
+.p4fb form select.form-control.p4fb__field__input--select.is-invalid {
+    border-color: #f33
+}
+
+.p4fb form .custom-select+.invalid-feedback,
+.p4fb form button+.invalid-feedback,
+.p4fb form input+.invalid-feedback,
+.p4fb form select.form-control.p4fb__field__input--select+.invalid-feedback {
+    background: #f33;
+    color: #fff;
+    padding: 5px
+}
+
+.p4fb form .formblock-flex {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%
+}
+
+@media (min-width:768px) {
+    .p4fb form .formblock-flex {
+        justify-content: space-between
+    }
+}
+
+.p4fb form .formblock-flex .p4fb__field {
+    width: 100%
+}
+
+@media (min-width:768px) {
+    .p4fb form .formblock-flex .p4fb__field {
+        width: 49%
+    }
+}
+
+.p4fb form .submit {
+    margin: 0;
+    line-height: 1
+}
+
+@media (min-width:768px) {
+    .p4fb form .submit {
+        display: flex;
+        flex-direction: row-reverse
+    }
+}
+
+.p4fb form input[type=submit] {
+    margin-bottom: 0;
+    line-height: 1
+}
+
+.p4fb form .form-check-label-block {
+    display: inline-block;
+    padding: 10px 15px;
+    margin-bottom: 20px
+}
+
+.p4fb-full-width-bg .p4fb form .form-check-label-block {
+    background: rgba(255, 255, 255, .5);
+    color: #000
+}
+
+.p4fb form .form-check-label-block input[type=checkbox]+.custom-control-description {
+    font-size: .85rem
+}
+
+.p4fb form .form-check-label-block input[type=checkbox]+.custom-control-description:before {
+    border: 3px solid #fff;
+    vertical-align: middle
+}
+
+.p4fb-full-width-bg .p4fb form .form-check-label-block input[type=checkbox]+.custom-control-description:before {
+    border: 3px solid #0a3351
+}
+
+.p4fb h2 {
+    font-size: 1.625rem;
+    line-height: 32px;
+    margin-bottom: 24px
+}
+
+.p4fb h2.thankyou {
+    margin-bottom: 0
+}
+
+@media (min-width:768px) {
+    .p4fb h2 {
+        font-size: 1.75rem;
+        line-height: 34px
+    }
+}
+
+@media (min-width:992px) {
+    .p4fb h2 {
+        font-size: 2.125rem
+    }
+}
+
+@media (min-width:1200px) {
+    .p4fb h2 {
+        font-size: 2.25rem
+    }
+}
+
+.p4fb p {
+    font-family: Roboto, sans-serif;
+    line-height: 18px;
+    text-align: left;
+    margin-bottom: 24px;
+    font-size: 1rem
+}
+
+@media (min-width:768px) {
+    .p4fb p {
+        text-align: center
+    }
+}
+
+@media (min-width:992px) {
+    .p4fb p {
+        text-align: left
+    }
+}
+
+.p4fb .thankyou-subtitle {
+    font-weight: 400
+}
+
+.en-spinner {
+    border-color: #fff!important;
+    border-right-color: transparent!important;
+    display: none;
+    vertical-align: middle
+}

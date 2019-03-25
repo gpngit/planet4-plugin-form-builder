@@ -1,19 +1,26 @@
 <?php
+declare( strict_types=1 );
 /**
  * BSD Form handler class.
  * This class hooks to the 'P4FB_KEY_PREFIX_send_entry_bsd' action and sends the form entry to the BSD CRM.
  *
+ * @package P4FB\Form_Builder
  */
 
 namespace P4FB\Form_Builder;
 
+/**
+ * Class Entry_Handler_BSD
+ *
+ * @package P4FB\Form_Builder
+ */
 class Entry_Handler_BSD {
 	/**
 	 *  Store the singleton instance
 	 *
 	 * @var  Entry_Handler_BSD
 	 */
-	static $instance;
+	private static $instance;
 
 	/**
 	 * Create singleton instance.
@@ -31,7 +38,7 @@ class Entry_Handler_BSD {
 	/**
 	 * Set up our hooks.
 	 */
-	function load() {
+	public function load() {
 		add_filter( P4FB_KEY_PREFIX . 'crm_is_configured_bsd', [ $this, 'crm_is_configured' ] );
 		add_action( P4FB_KEY_PREFIX . 'send_entry_bsd', [ $this, 'send_entry' ], 10, 2 );
 	}
@@ -39,20 +46,14 @@ class Entry_Handler_BSD {
 	/**
 	 * Check whether we have our settings configured.
 	 *
-	 * @param bool $status The current status
-	 *
 	 * @return mixed Whether we have our set up or not.
 	 */
-	public function crm_is_configured( bool $status ) : bool {
+	public function crm_is_configured() : bool {
 		$options  = get_option( P4FB_SETTINGS_OPTION_NAME );
 		$base_url = $options['base_url'] ?? '';
 		$source   = $options['source'] ?? '';
-		if ( empty( $base_url ) || empty( $source ) ) {
 
-			return false;
-		}
-
-		return true;
+		return ! ( empty( $base_url ) || empty( $source ) );
 	}
 
 	/**
@@ -66,16 +67,14 @@ class Entry_Handler_BSD {
 			$passed_response = [];
 		}
 
-		if ( ! $this->crm_is_configured( false, P4FB_SETTINGS_OPTION_NAME ) ) {
+		if ( ! $this->crm_is_configured() ) {
 			$passed_response['code']  = 'error';
 			$passed_response['error'] = __( 'Not configured', 'planet4-form-builder' );
 
 			return;
 		}
 
-		$options = get_option( P4FB_SETTINGS_OPTION_NAME );
-		// @Todo: Should retries be handled?
-		$retries        = (int) $options['api_retries'] ?? 0;
+		$options        = get_option( P4FB_SETTINGS_OPTION_NAME );
 		$base_url       = $options['base_url'] ?? '';
 		$source         = $options['source'] ?? '';
 		$args['source'] = $source;
@@ -116,7 +115,5 @@ class Entry_Handler_BSD {
 			$passed_response['code']     = 'success';
 			$passed_response['response'] = $response_body;
 		}
-
-		return;
 	}
 }
